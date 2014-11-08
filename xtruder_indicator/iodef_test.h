@@ -1,20 +1,24 @@
 
 //   IO using Launchpad LEDs/buttons (for testing)
 
-#define QA_INPUT BIT4  // port 1
-#define QB_INPUT BIT5  // port 1
+// port 1
+#define QA_INPUT BIT4
+#define QB_INPUT BIT5
+
 
 #define ZERO_BTN_PIN BIT1
 #define ZERO_BTN_REG P1IN
 #define ZERO_BTN_PORT GPIO_PORT_P1
 
-#define QA_LED_PIN BIT0		// red LED
+// red LED
+#define QA_LED_PIN BIT0
 #define QA_LED_PORT P1OUT
 
-#define QB_LED_PIN BIT5		// external LED
+// external LED
+#define QB_LED_PIN BIT5
 #define QB_LED_PORT P2OUT
 
-#define ZERO_LED_PIN BIT7	// green LED
+// green LED
+#define ZERO_LED_PIN BIT7
 #define ZERO_LED_PORT P4OUT
-
 

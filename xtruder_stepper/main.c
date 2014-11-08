@@ -5,7 +5,8 @@
 
 #include "usb_handler.h"
 
-
+//#include "iodef_test.h"  //   TEST
+#include "iodef_prod.h"
 
 #define SPICLK 1000000
 
@@ -229,8 +230,8 @@ void main(void)	{													//////////////////                 ======== main =
 				TB0CCR0=calcPeriod();
 
 				// set direction pin
-				if (curMotorSpeed>0) P4OUT |= BIT1;
-				else P4OUT &= ~BIT1;
+				if (curMotorSpeed>0) DIR_PORT |= DIR_PIN;
+				else DIR_PORT &= ~DIR_PIN;
 
 				// process dynamic torque
 				curTorque = calcTorque();
@@ -273,9 +274,9 @@ __interrupt void TIMER0_B0_ISR (void)
 {
 
 	if (abs(curMotorSpeed)>15) {
-		P4OUT |= BIT2;			// STEP high
+		STEP_PORT |= STEP_PIN;			// STEP high
 		__delay_cycles(48);  	// stay high for ~2uS
-		P4OUT &= ~BIT2;			// STEP low
+		STEP_PORT &= ~STEP_PIN;			// STEP low
 	}
 
 }
