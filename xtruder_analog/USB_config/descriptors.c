@@ -117,15 +117,15 @@ const struct abromConfigurationDescriptorGroup abromConfigurationDescriptorGroup
             DESC_TYPE_ENDPOINT,                 // bDescriptorType
             HID0_INEP_ADDR,                     // bEndpointAddress; bit7=1 for IN, bits 3-0=1 for ep1
             EP_DESC_ATTR_TYPE_INT,              // bmAttributes, interrupt transfers
-            0x40, 0x00,                         // wMaxPacketSize, 64 bytes
-            1,                                  // bInterval, ms
+            MAX_PACKET_SIZE, 0x00,                         // wMaxPacketSize, 64 bytes
+            50,                                  // bInterval, ms
 
             SIZEOF_ENDPOINT_DESCRIPTOR,         // bLength
             DESC_TYPE_ENDPOINT,                 // bDescriptorType
             HID0_OUTEP_ADDR,                    // bEndpointAddress; bit7=1 for IN, bits 3-0=1 for ep1
             EP_DESC_ATTR_TYPE_INT,              // bmAttributes, interrupt transfers
-            0x40, 0x00,                         // wMaxPacketSize, 64 bytes
-            1,                                  // bInterval, ms
+            MAX_PACKET_SIZE, 0x00,                         // wMaxPacketSize, 64 bytes
+            50,                                  // bInterval, ms
              /* end of HID[0]*/
         }
 

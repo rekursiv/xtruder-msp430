@@ -57,8 +57,8 @@ extern "C"
 
 // Configuration Constants that can change
 // #define that relates to Device Descriptor
-#define USB_VID               0x2047        // Vendor ID (VID)
-#define USB_PID               0x03e1        // Product ID (PID)
+#define USB_VID               0x80ee	//0x2047        // Vendor ID (VID)
+#define USB_PID               0x0101	//0x03e1        // Product ID (PID)
 /*----------------------------------------------------------------------------+
 | Firmware Version                                                            |
 | How to detect version number of the FW running on MSP430?                   |
@@ -122,14 +122,14 @@ extern "C"
 // Controls what the device reports to the host regarding how much power it will
 // consume from VBUS.  Expressed in 2mA units; that is, the number of mA
 // communicated is twice the value of this field.
-#define USB_MAX_POWER 0x32
+#define USB_MAX_POWER 0x08  //0x32
 //Configuration constants that can not change ( Fixed Values)
 #define CDC_CLASS  2
 #define HID_CLASS  3
 #define MSC_CLASS  4
 #define PHDC_CLASS 5
 
-    #define MAX_PACKET_SIZE   0x40              // Max size of the USB packets.
+#define MAX_PACKET_SIZE 0x40              // Max size of the USB packets.
 
 //***********************************************************************************************
 // DESCRIPTOR CONSTANTS

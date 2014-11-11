@@ -5,8 +5,8 @@
 
 #include "usb_handler.h"
 
-//#include "iodef_test.h"  //   TEST
-#include "iodef_prod.h"
+#include "iodef_test.h"  //   TEST
+//#include "iodef_prod.h"
 
 #define SPICLK 1000000
 

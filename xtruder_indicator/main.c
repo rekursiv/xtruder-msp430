@@ -4,8 +4,8 @@
 
 #include "usb_handler.h"
 
-#include "iodef_test.h"  //   TEST
-//#include "iodef_prod.h"
+//#include "iodef_test.h"  //   TEST
+#include "iodef_prod.h"
 
 #define TIMER_A_PERIOD 3200
 
