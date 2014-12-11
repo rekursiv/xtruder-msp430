@@ -10,29 +10,28 @@
 
 #define SPICLK 1000000
 
-
 uint8_t timerWakeUp=0;
-
-volatile int16_t curMotorSpeed = 0;
 uint8_t prevTorque=1;
 
 
 ////////////  CONFIG   /////////
 
-uint8_t accelDiv = 1;
-uint8_t accelStep = 8;
-uint8_t holdingTorque = 0;
-uint8_t minTorque = 127;
-uint8_t maxTorque = 255;
-uint8_t torqueDiv = 255;
-uint8_t stepMode = 4;
-uint8_t isGain = 3;   // 3
+volatile uint8_t stepMode = 4;
+volatile uint8_t isGain = 3;
+volatile uint8_t holdingTorque = 0;
+volatile uint8_t minTorque = 127;
+volatile uint8_t maxTorque = 255;
+volatile uint8_t torqueDiv = 255;
+volatile uint8_t accelDiv = 1;
+volatile uint8_t accelStep = 8;
 
-////////////////////////////
+////////////  USB DATA  /////////
 
 volatile uint8_t mcStatus=0;
 volatile int16_t targetMotorSpeed = 0;
 volatile uint8_t curTorque=0;
+volatile uint8_t curCmd = 0;
+volatile int16_t curMotorSpeed = 0;
 
 ///////////////////////////////////////////////////
 

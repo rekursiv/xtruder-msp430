@@ -32,8 +32,21 @@ inline void readData() {
 	while (USBHID_bytesInUSBBuffer(HID0_INTFNUM)) {
 		msgLen = hidReceiveDataInBuffer((uint8_t*)dataBuffer, BUFFER_SIZE, HID0_INTFNUM);
 		if (msgLen>0) {
-			if (dataBuffer[0]==1) {
+			curCmd=dataBuffer[0];
+			if (curCmd==1) {
+				// TODO: check msgLen
+				stepMode=dataBuffer[1];
+				isGain=dataBuffer[2];
+				holdingTorque=dataBuffer[3];
+				minTorque=dataBuffer[4];
+				maxTorque=dataBuffer[5];
+				torqueDiv=dataBuffer[6];
+				accelDiv=dataBuffer[7];
+				accelStep=dataBuffer[8];
+			} else if (curCmd==2) {
 				targetMotorSpeed=(dataBuffer[1]<<8)|dataBuffer[2];
+			} else if (curCmd==3) {
+				//  TODO:  clear status
 			}
 		}
 	}
