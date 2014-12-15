@@ -45,8 +45,6 @@ inline void readData() {
 				accelStep=dataBuffer[8];
 			} else if (curCmd==2) {
 				targetMotorSpeed=(dataBuffer[1]<<8)|dataBuffer[2];
-			} else if (curCmd==3) {
-				//  TODO:  clear status
 			}
 		}
 	}

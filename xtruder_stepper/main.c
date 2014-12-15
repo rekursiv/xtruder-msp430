@@ -5,8 +5,8 @@
 
 #include "usb_handler.h"
 
-#include "iodef_test.h"  //   TEST
-//#include "iodef_prod.h"
+//#include "iodef_test.h"  //   TEST
+#include "iodef_prod.h"
 
 #define SPICLK 1000000
 
@@ -174,16 +174,16 @@ inline void resetMotorController() {
 	GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN7);  //  RESET
 
 	sendSpiData(0b01110000, 0b00000000);  // clear STATUS
-	//         daaaxxxx    ssvppcct
+	//            daaaxxxx    ssvppcct
 
 	sendSpiData(0b00110001, 0b10000000);  // BLANK
-	//         daaaxxxe    tttttttt
+	//            daaaxxxe    tttttttt
 
 	sendSpiData(0b01000100, 0b00010000);  // DECAY
-	//         daaaxmmm    tttttttt
+	//            daaaxmmm    tttttttt
 
 	sendSpiData(0b01100000, 0b01011111);  // DRIVE
-	//         daaaiiii    ttttggoo
+	//            daaaiiii    ttttggoo
 
 	curTorque=holdingTorque;
 	sendCtrl();
@@ -240,7 +240,7 @@ void main(void)	{													//////////////////                 ======== main =
 					}
 					prevTorque = curTorque;
 					sendSpiData(0b00010001, curTorque);  // TORQUE
-					//         daaaxeee    tttttttt
+					//            daaaxeee    tttttttt
 				}
 			}
 
@@ -248,8 +248,16 @@ void main(void)	{													//////////////////                 ======== main =
 		}
 
 		if (handleUsb()) {
-			// TODO: only on status cmd
+			if (curCmd==1) {
+				TA0CCR0 = accelDiv;
+			} else if (curCmd==3) {
+				targetMotorSpeed = 0;
+				curMotorSpeed = 0;
+				sendSpiData(0b01110000, 0b00000000);  // clear STATUS
+				//            daaaxxxx    ssvppcct
+			}
 			sendSpiData(0b11110000, 0b00000000);  //  read SATAUS
+			curCmd = 0;
 		}
 	}
 }
