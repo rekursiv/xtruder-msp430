@@ -44,7 +44,7 @@
 #include <USB_API/USB_HID_API/UsbHid.h>
 #include <USB_API/USB_HID_API/UsbHidReq.h>
 
-#define ALLOW_NESTED_INTERRUPTS
+//#define ALLOW_NESTED_INTERRUPTS
 
 /*----------------------------------------------------------------------------+
 | External Variables                                                          |

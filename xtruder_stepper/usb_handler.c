@@ -15,7 +15,8 @@
 #define OUT_PKT_TYPE_INFO 0
 
 #define BUFFER_SIZE 64
-uint8_t dataBuffer[BUFFER_SIZE];
+uint8_t dataBufferIn[BUFFER_SIZE];
+uint8_t dataBufferOut[BUFFER_SIZE];
 
 // Global flags set by events
 volatile uint8_t bHIDDataReceived_event = FALSE;  // Flag set by event handler to indicate data has been received into USB buffer
@@ -28,40 +29,46 @@ inline void initUsb() {
 
 
 inline void readData() {
-	uint8_t msgLen=0;
-	while (USBHID_bytesInUSBBuffer(HID0_INTFNUM)) {
-		msgLen = hidReceiveDataInBuffer((uint8_t*)dataBuffer, BUFFER_SIZE, HID0_INTFNUM);
-		if (msgLen>0) {
-			curCmd=dataBuffer[0];
-			if (curCmd==1) {
-				// TODO: check msgLen
-				stepMode=dataBuffer[1];
-				isGain=dataBuffer[2];
-				holdingTorque=dataBuffer[3];
-				minTorque=dataBuffer[4];
-				maxTorque=dataBuffer[5];
-				torqueDiv=dataBuffer[6];
-				accelDiv=dataBuffer[7];
-				accelStep=dataBuffer[8];
-			} else if (curCmd==2) {
-				targetMotorSpeed=(dataBuffer[1]<<8)|dataBuffer[2];
-			}
+	uint8_t msgLen = hidReceiveDataInBuffer((uint8_t*)dataBufferIn, BUFFER_SIZE, HID0_INTFNUM);
+	if (msgLen>0) {
+		curCmd=dataBufferIn[0];
+		if (curCmd==1) {
+			// TODO: check msgLen
+			stepMode=dataBufferIn[1];
+			isGain=dataBufferIn[2];
+			holdingTorque=dataBufferIn[3];
+			minTorque=dataBufferIn[4];
+			maxTorque=dataBufferIn[5];
+			torqueDiv=dataBufferIn[6];
+			accelDiv=dataBufferIn[7];
+			accelStep=dataBufferIn[8];
+		} else if (curCmd==2) {
+			targetMotorSpeed=(dataBufferIn[1]<<8)|dataBufferIn[2];
 		}
 	}
 }
 
 inline void writeData() {
 
+	// check for error or send in progress
+	// only continue if USBHID_intfStatus() returns 0 (all clear)
+    uint16_t bytesSent, bytesReceived;
+	if (USBHID_intfStatus(HID0_INTFNUM, &bytesSent, &bytesReceived)!=0) return;
+
 	// setup packet
 	uint8_t msgLen=5;
-	dataBuffer[0] = OUT_PKT_TYPE_INFO;
-	dataBuffer[1] = (curMotorSpeed >> 8) & 0xFF;
-	dataBuffer[2] = curMotorSpeed & 0xFF;
-	dataBuffer[3] = curTorque;
-	dataBuffer[4] = mcStatus;
+	dataBufferOut[0] = OUT_PKT_TYPE_INFO;
+	dataBufferOut[1] = (curMotorSpeed >> 8) & 0xFF;
+	dataBufferOut[2] = curMotorSpeed & 0xFF;
+	dataBufferOut[3] = curTorque;
+	dataBufferOut[4] = mcStatus;
 
 	// send
-	hidSendDataInBackground((uint8_t*)dataBuffer, msgLen, HID0_INTFNUM, 0);
+	if (USBHID_sendData((uint8_t*)dataBufferOut, msgLen, HID0_INTFNUM)!=kUSBHID_sendStarted) {
+		uint16_t sentLen;
+		USBHID_abortSend(&sentLen, HID0_INTFNUM);
+	}
+
 }
 
 
