@@ -16,9 +16,9 @@
 </tr>
 </tbody>
 </table>
-<h1>MSP430 DriverLib &nbsp;1.80.00.18</h1>
+<h1>MSP430 DriverLib &nbsp;1.95.00.49</h1>
 <h2>Release Notes&nbsp;</h2>
-Document Revision: 030614.2134<br>
+Document Revision: 100114.1418<br>
 <br>
 <h2><a name="Introduction" id="Introduction">Introduction</a></h2>
 <p>This is the MSP430 Peripheral Driver Library.
@@ -63,32 +63,39 @@ Driver Library API&nbsp;</li>
 <li><a href="doc/MSP430FR57xx/html/index.html">MSP430FR57xx</a></li>
 </ul>
 <ul>
-<li><a href="doc/MSP430FR5xx_6xx/html/index.html">MSP430FR5xx_6xx</a></li>
+<li><a href="doc/MSP430FR5xx_6xx/html/index.html">MSP430FR5xx_6xx</a></li><li><a href="doc/MSP430FR2xx_4xx/html/index.html">MSP430FR2xx_4xx</a></li><li><a href="doc/MSP430i2xx/html/index.html">MSP430i2xx</a></li>
 </ul>
 <li>MSP430ware
 Peripheral
 Driver Library User's Guides</li>
 <ul>
-<li><a href="doc/MSP430F5xx_6xx/MSP430F5xx_6xx_DriverLib_Users_Guide-1_80_00_18.pdf">MSP430F5xx_6xx</a></li>
+<li><a href="doc/MSP430F5xx_6xx/MSP430F5xx_6xx_DriverLib_Users_Guide-1_95_00_49.pdf">MSP430F5xx_6xx</a></li>
 </ul>
 <ul>
-<li><a href="doc/MSP430FR57xx/MSP430FR57xx_DriverLib_Users_Guide-1_80_00_18.pdf">MSP430FR57xx</a></li>
+<li><a href="doc/MSP430FR57xx/MSP430FR57xx_DriverLib_Users_Guide-1_95_00_49.pdf">MSP430FR57xx</a></li>
 </ul>
 <ul>
-<li><a href="doc/MSP430FR5xx_6xx/MSP430FR5xx_6xx_DriverLib_Users_Guide-1_80_00_18.pdf">MSP430FR5xx_6xx</a></li>
+<li><a href="doc/MSP430FR5xx_6xx/MSP430FR5xx_6xx_DriverLib_Users_Guide-1_95_00_49.pdf">MSP430FR5xx_6xx</a></li><li><a href="doc/MSP430FR2xx_4xx/MSP430FR2xx_4xx_DriverLib_Users_Guide-1_95_00_49.pdf">MSP430FR2xx_4xx</a></li><li><a href="doc/MSP430i2xx/MSP430i2xx_DriverLib_Users_Guide-1_95_00_49.pdf">MSP430i2xx</a></li>
 </ul>
 <li><a href="./manifest.html">Manifest</a></li>
 <li><a href="./license.txt">License</a></li>
 </ul>
 <h2><a name="Whats_New" id="Whats_New">What's&nbsp;New</a></h2>
-<span style="font-weight: bold;">1.80.00.18<br>
-</span><ul><li>Added support for MSP430F6779A device family</li><li>Bugzilla issue (6073) fixed - Clock divider calculation error in timer_b.c</li><li>Users upgrading driverlib from version 1.60 to 1.80, please refer <a href="release_notes.html#Upgrade_and_Compatibility_Information">Upgrade
+<span style="font-weight: bold;">1.95.00.49<br>
+</span><ul><li>Added support for MSP430FR2xx_4xx family of devices</li><li>Added
+new APIs that are compliant with&nbsp;Texas Instruments new coding
+guidelines. Existing user code will work without modification if it
+includes driverlib.h instead of individual peripheral header files.
+Refer&nbsp;<a href="release_notes.html#Upgrade_and_Compatibility_Information">Upgrade
+and Compatibility Information</a></li><li>By
+default all deprecated APIs work. All deprecated APIs can be excluded
+from build by adding compiler option &#8211;DDEPRECATED in the project setting</li><li>Minor documentation updates</li><li>Added structs to doxygen documentation</li></ul>
+<h2><a name="Revision_History" id="Whats_New"></a>Revision
+History</h2><span style="font-weight: bold;">1.90.00.65<br></span><ul><li>Added support for MSP430i2xx family of devices</li><li>Added support for MSP430FR69xx family of devices</li><li>Optimized GPIO functions across families to use a lookup table to improve performance</li><li>Optimized&nbsp;TIMER_A, TIMER_B and TIMER_D initialization performance</li><li>Improved MPU APIs and documentation</li><li>Bugzilla issue (5895) fixed -&nbsp; cleared MPU password</li><li>Bugzilla issue (6133) fixed -&nbsp; locking MPU turns off MPU</li><li>Bugzilla issue (6134) fixed -&nbsp; permissions not set correctly when uysing MPU_createThreeSegments()</li><li>Bugzilla issue (6138) fixed - &nbsp;Enabling MPU NMI turns off the MPU</li><li>Bugzilla issue (6139) fixed - &nbsp;Enable NMI after MPU Lock kills program</li><li>Fixed issues with documentation for all RTC modules</li><li>Fixed permissions issues that didn't allow group/word access</li><li>Fixed various documentation issues throughout APIs and examples</li></ul><span style="font-weight: bold;">1.80.00.18<br></span><ul><li>Added support for MSP430F6779A device family</li><li>Bugzilla issue (6073) fixed - Clock divider calculation error in timer_b.c</li><li>Users upgrading driverlib from version 1.60 to 1.80, please refer <a href="release_notes.html#Upgrade_and_Compatibility_Information">Upgrade
 and Compatibility Information</a> section.</li><li>Removal
 of baseaddress removes support of Grace 2.20.02.32. Users that rely on
 Grace should not update Driver Library at this time until a new Grace
 is released.</li></ul>
-<h2><a name="Revision_History" id="Whats_New"></a>Revision
-History</h2>
 <span style="font-weight: bold;">1.70.00.41<br></span><ul><li>Improved RTSC support. Driver Library projects added to New
 Project Wizard and Project Template.</li><li>Energia support</li><li>Removed
 baseaddress parameter in core peripherals. Provided backward
@@ -344,12 +351,12 @@ Driver Library:<br>
 <ul>
 <li>MSP430F5xx_6xx</li>
 <li>MSP430FR57xx</li>
-<li>MSP430FR5xx_6xx</li>
+<li>MSP430FR5xx_6xx</li><li>MSP430FR2xx_4xx</li><li>MSP430i2xx</li>
 </ul>
 <h2><a name="Peripheral_Support" id="Known_Issues">Peripheral
 Support</a></h2>
 <h2 style="font-weight: normal;"><small><small>This
-is the 1.80.00.18 release of MSP430 Peripheral Driver
+is the 1.95.00.49 release of MSP430 Peripheral Driver
 Library. &nbsp;The following peripherals are supported in this
 release:</small></small></h2>
 <ul>
@@ -358,7 +365,7 @@ release:</small></small></h2>
 <li>ADC10_A</li>
 <li>ADC12_A</li>
 <li>AES</li>
-<li>BAK_BATT (Battery Backup System)</li>
+<li>BATTBAK (Battery Backup System)</li>
 <li>COMP_B</li>
 <li>CRC</li>
 <li>DAC12_A</li>
@@ -369,7 +376,7 @@ release:</small></small></h2>
 <li>EUSCI_A_UART</li>
 <li>FLASH</li>
 <li>SFR</li>
-<li>SYS</li>
+<li>SYSCTL</li>
 <li>GPIO</li>
 <li>LDOPWR</li>
 <li>MPY32</li>
@@ -410,7 +417,7 @@ release:</small></small></h2>
 <li>EUSCI_A_SPI</li>
 <li>EUSCI_B_SPI</li>
 <li>EUSCI_A_UART</li>
-<li>FRAM</li>
+<li>FRAMCTL</li>
 <li>GPIO</li>
 <li>MPU</li>
 <li>MPY32</li>
@@ -418,7 +425,7 @@ release:</small></small></h2>
 <li>REF</li>
 <li>RTC_B</li>
 <li>SFR</li>
-<li>SYS</li>
+<li>SYSCTL</li>
 <li>TIMER_A</li>
 <li>TIMER_B</li>
 <li>TLV</li>
@@ -438,7 +445,7 @@ release:</small></small></h2>
 <li>EUSCI_A_SPI</li>
 <li>EUSCI_B_SPI</li>
 <li>EUSCI_A_UART</li>
-<li>FRAM</li>
+<li>FRAMCTL</li>
 <li>GPIO</li>
 <li>MPU</li>
 <li>MPY32</li>
@@ -446,12 +453,12 @@ release:</small></small></h2>
 <li>REF_A</li>
 <li>RTC_B</li>
 <li>SFR</li>
-<li>SYS</li>
+<li>SYSCTL</li>
 <li>TIMER_A</li>
 <li>TIMER_B</li>
 <li>TLV</li>
 <li>WDT_A</li>
-</ul>
+</ul><li>MSP430FR2xx_4xx Devices </li><ul><li>ADC</li><li>CRC</li><li>CS</li><li>EUSCI_B_I2C</li><li>EUSCI_A_SPI</li><li>EUSCI_B_SPI</li><li>EUSCI_A_UART</li><li>FRAMCTL</li><li>GPIO</li><li>LCD_E</li><li>PMM</li><li>RTC</li><li>SFR</li><li>SYSCTL</li><li>TIMER_A</li><li>TLV</li><li>WDT_A</li></ul><li>MSP430i2xx Devices </li><ul><li>CS</li><li>EUSCI_B_I2C</li><li>EUSCI_A_SPI</li><li>EUSCI_B_SPI</li><li>EUSCI_A_UART</li><li>FLASHCTL</li><li>GPIO</li><li>MPY</li><li>PMM</li><li>SD24</li><li>SFR</li><li>TIMER_A</li><li>TLV</li><li>WDT</li></ul>
 </ul>
 <h2><a name="Dependencies" id="Dependencies">Dependencies</a></h2>
 MSP4305xx_6xx devices
@@ -469,11 +476,21 @@ MSP430FR5xx_6xx devices
 <li>CCS 5.5</li>
 <li>IAR 5.60</li>
 </ul>
+MSP430FR2xx_4xx devices
+<ul><li>CCS 6.0.1</li><li>IAR 5.60</li></ul>
+MSP430i2xx devices
+<ul><li>CCS 5.5</li><li>IAR 5.60</li></ul>
 <h2><a name="Validation" id="Validation">Validation
 Information</a></h2>
 <p>This release is a GA version.</p>
 <h2><a name="Upgrade_and_Compatibility_Information"></a>Upgrade
-and Compatibility Information</h2><big><span style="font-weight: bold;">Steps to&nbsp;upgrade from Driverlib 1.60 to Driverlib 1.70 </span></big><br style="font-weight: bold;"><ol><li style="font-weight: bold;">Add compiler define DRIVERLIB_LEGACY_MODE</li><li><span style="font-weight: bold;">Include "driverlib.h" instead of individual module header files ( eg. fram.h, wdt_a.h etc.)</span></li></ol>Removal of baseaddress removes support of Grace 2.20.02.32. Users that
+and Compatibility Information</h2><big><span style="font-weight: bold;">Steps to&nbsp;upgrade from Driverlib 1.90 to Driverlib 1.95 <br></span></big>1.&nbsp;&nbsp;&nbsp;
+All projects that use driverlib should work as is when you replace the
+existing driverlib by Driverlib 1.95. <br>2.&nbsp;&nbsp;&nbsp; Some of
+the source and header file names have changed to be in line with the
+new Texas Instruments coding guidelines. However as long as the user
+&nbsp;&nbsp;&nbsp; includes "driverlib.h" instead of individual
+peripheral header files, the user will have no issues upgrading.<br><br><big><span style="font-weight: bold;"></span></big><big><span style="font-weight: bold;">Steps to&nbsp;upgrade from Driverlib 1.60 to Driverlib 1.70 </span></big><br style="font-weight: bold;"><ol><li style="font-weight: bold;">Add compiler define DRIVERLIB_LEGACY_MODE</li><li><span style="font-weight: bold;">Include "driverlib.h" instead of individual module header files ( eg. fram.h, wdt_a.h etc.)</span></li></ol>Removal of baseaddress removes support of Grace 2.20.02.32. Users that
 rely on Grace should not update Driver Library at this time until a new
 Grace is released. <br><br>As
 part of our continued process of
@@ -590,7 +607,7 @@ optimized for size</li>
 </ul>
 <hr>
 <h2><a name="Versioning" id="Versioning">Versioning</a></h2>
-<p>This is build 1.80.00.18 of&nbsp; MSP430 driver library.</p>
+<p>This is build 1.95.00.49 of&nbsp; MSP430 driver library.</p>
 <h2><a name="Technical_Support" id="Technical_Support">Technical
 Support and Product Updates</a></h2>
 <ul>

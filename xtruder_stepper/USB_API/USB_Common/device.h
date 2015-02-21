@@ -69,10 +69,12 @@
     defined (__MSP430F5514__) || \
     defined (__MSP430F5513__)
     #define __MSP430F552x
+#elif defined (__MSP430FG6626__)
+	#define __MSP430FG6x2x
 #else
     #error \
     Define a constant of format __MSP430Fxxxx__ within the projects preprocessor settings,
 according to the device being used.
 #endif
 /*------------------------ Nothing Below This Line --------------------------*/
-//Released_Version_4_10_02
+//Released_Version_4_20_00

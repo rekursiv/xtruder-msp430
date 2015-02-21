@@ -5,7 +5,7 @@
 
 #include "usb_handler.h"
 
-#include "iodef_test.h"  //   TEST
+#include "iodef_test.h"  //   TEST     TODO:  re-enable DIR pin !!!!!
 //#include "iodef_prod.h"
 
 #define SPICLK 1000000
@@ -104,8 +104,6 @@ inline void initSpi() {
     GPIO_setAsPeripheralModuleFunctionOutputPin( GPIO_PORT_P3, GPIO_PIN0 + GPIO_PIN2 );
     GPIO_setAsPeripheralModuleFunctionInputPin( GPIO_PORT_P3, GPIO_PIN1 );
 
- //   GPIO_setAsInputPinWithPullDownresistor( GPIO_PORT_P3, GPIO_PIN1 );
-
     //Initialize Master
     uint8_t initStat = USCI_B_SPI_masterInit(USCI_B0_BASE,
         USCI_B_SPI_CLOCKSOURCE_SMCLK,
@@ -165,6 +163,7 @@ inline void setupPorts() {
 	GPIO_setAsInputPin(GPIO_PORT_P2, GPIO_PIN2); // FAULT
 
 	GPIO_setAsOutputPin(GPIO_PORT_P2, GPIO_PIN7);
+
 }
 
 inline void resetMotorController() {
@@ -229,8 +228,8 @@ void main(void)	{													//////////////////                 ======== main =
 				TB0CCR0=calcPeriod();
 
 				// set direction pin
-				if (curMotorSpeed>0) DIR_PORT |= DIR_PIN;
-				else DIR_PORT &= ~DIR_PIN;
+//				if (curMotorSpeed>0) DIR_PORT |= DIR_PIN;
+//				else DIR_PORT &= ~DIR_PIN;
 
 				// process dynamic torque
 				curTorque = calcTorque();
@@ -245,6 +244,7 @@ void main(void)	{													//////////////////                 ======== main =
 			}
 
 			timerWakeUp=0;
+
 		}
 
 		if (handleUsb()) {
@@ -291,6 +291,30 @@ __interrupt void TIMER0_B0_ISR (void)
 
 
 
+
+
+
+
+
 //if (targetMotorSpeed>100) P1OUT ^= BIT0;    ///////   TEST
 //P1OUT |= BIT0;
 //P1OUT &= ~BIT0;
+
+
+
+/*
+ *
+uint8_t testBtnDn=0;   ///////////   TEST
+ 	GPIO_setAsInputPinWithPullUpresistor(GPIO_PORT_P1, GPIO_PIN1);    ///   TEST BUTTON
+			if ((P1IN&BIT1)==0&&!testBtnDn) {
+				testBtnDn=1;
+				resetUsb();
+				P4OUT |= BIT7;
+			}
+			if ((P1IN&BIT1)!=0&&testBtnDn) {
+				testBtnDn=0;
+				P4OUT &= ~BIT7;
+			}
+*/
+
+

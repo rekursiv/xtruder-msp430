@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@
 
 //*****************************************************************************
 //
-//! \addtogroup pmap_api
+//! \addtogroup pmap_api pmap
 //! @{
 //
 //*****************************************************************************
@@ -50,58 +50,47 @@
 
 #include <assert.h>
 
-//*****************************************************************************
-//
-//! \brief This function configures the MSP430 Port Mapper
-//!
-//! This function port maps a set of pins to a new set.
-//!
-//! \param baseAddress is the base address of the PMAP control module.
-//! \param portMapping is the pointer to init Data
-//! \param PxMAPy is the pointer start of first PMAP to initialize
-//! \param numberOfPorts is the number of Ports to initialize
-//! \param portMapReconfigure is used to enable/disable reconfiguration
-//!        Valid values are:
-//!        - \b PMAP_ENABLE_RECONFIGURATION
-//!        - \b PMAP_DISABLE_RECONFIGURATION [Default]
-//!
-//! Modified bits of \b PMAPKETID register and bits of \b PMAPCTL register.
-//!
-//! \return None
-//
-//*****************************************************************************
-void PMAP_configurePorts( uint32_t baseAddress,
-                          const uint8_t *portMapping,
-                          uint8_t *PxMAPy,
-                          uint8_t numberOfPorts,
-                          uint8_t portMapReconfigure
-                          )
+void PMAP_configurePorts(uint16_t baseAddress,
+                         const uint8_t *portMapping,
+                         uint8_t *PxMAPy,
+                         uint8_t numberOfPorts,
+                         uint8_t portMapReconfigure)
 {
-        assert((portMapReconfigure == PMAP_ENABLE_RECONFIGURATION) ||
-               (portMapReconfigure == PMAP_DISABLE_RECONFIGURATION)
-               );
+    PMAP_initPortsParam param = {0};
+    param.portMapping = portMapping;
+    param.PxMAPy = PxMAPy;
+    param.numberOfPorts = numberOfPorts;
+    param.portMapReconfigure = portMapReconfigure;
 
-        //Store current interrupt state, then disable all interrupts
-        uint16_t globalInterruptState = __get_SR_register() & GIE;
-        __disable_interrupt();
+    PMAP_initPorts(baseAddress, &param);
+}
 
-        //Get write-access to port mapping registers:
-        HWREG16(baseAddress + OFS_PMAPKEYID) = PMAPPW;
+void PMAP_initPorts(uint16_t baseAddress,
+                    PMAP_initPortsParam *param)
+{
+    //Store current interrupt state, then disable all interrupts
+    uint16_t globalInterruptState = __get_SR_register() & GIE;
+    __disable_interrupt();
 
-        //Enable/Disable reconfiguration during runtime
-        HWREG8(baseAddress + OFS_PMAPCTL) &= ~PMAPRECFG;
-        HWREG8(baseAddress + OFS_PMAPCTL) |= portMapReconfigure;
+    //Get write-access to port mapping registers:
+    HWREG16(baseAddress + OFS_PMAPKEYID) = PMAPPW;
 
-        //Configure Port Mapping:
-        uint16_t i;
-        for (i = 0; i < numberOfPorts * 8; i++)
-                PxMAPy[i] = portMapping[i];
+    //Enable/Disable reconfiguration during runtime
+    HWREG8(baseAddress + OFS_PMAPCTL) &= ~PMAPRECFG;
+    HWREG8(baseAddress + OFS_PMAPCTL) |= param->portMapReconfigure;
 
-        //Disable write-access to port mapping registers:
-        HWREG8(baseAddress + OFS_PMAPKEYID) = 0;
+    //Configure Port Mapping:
+    uint16_t i;
+    for(i = 0; i < param->numberOfPorts * 8; i++)
+    {
+        param->PxMAPy[i] = param->portMapping[i];
+    }
 
-        //Restore previous interrupt state
-        __bis_SR_register(globalInterruptState);
+    //Disable write-access to port mapping registers:
+    HWREG8(baseAddress + OFS_PMAPKEYID) = 0;
+
+    //Restore previous interrupt state
+    __bis_SR_register(globalInterruptState);
 }
 
 #endif
@@ -111,4 +100,4 @@ void PMAP_configurePorts( uint32_t baseAddress,
 //! @}
 //
 //*****************************************************************************
-//Released_Version_4_10_02
+//Released_Version_4_20_00

@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,11 +47,11 @@
 //
 //*****************************************************************************
 #define HWREG32(x)                                                              \
-        (*((volatile uint32_t*)((uint16_t)x)))
+    (*((volatile uint32_t *)((uint16_t)x)))
 #define HWREG16(x)                                                             \
-        (*((volatile uint16_t*)((uint16_t)x)))
+    (*((volatile uint16_t *)((uint16_t)x)))
 #define HWREG8(x)                                                             \
-        (*((volatile uint8_t*)((uint16_t)x)))
+    (*((volatile uint8_t *)((uint16_t)x)))
 
 //*****************************************************************************
 //
@@ -62,4 +62,4 @@
 #define STATUS_FAIL     0x00
 
 #endif // #ifndef __HW_REGACCESS__
-//Released_Version_4_10_02
+//Released_Version_4_20_00

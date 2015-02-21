@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@
 
 //*****************************************************************************
 //
-//! \addtogroup sfr_api
+//! \addtogroup sfr_api sfr
 //! @{
 //
 //*****************************************************************************
@@ -52,215 +52,42 @@
 
 #include <assert.h>
 
-//*****************************************************************************
-//
-//! \brief Enables selected SFR interrupt sources.
-//!
-//! This function enables the selected SFR interrupt sources. Only the sources
-//! that are enabled can be reflected to the processor interrupt; disabled
-//! sources have no effect on the processor.
-//!
-//! \param interruptMask is the bit mask of interrupts that will be enabled.
-//!        Mask value is the logical OR of any of the following:
-//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt enable
-//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt enable
-//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt enable, if NMI
-//!           function is chosen
-//!        - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT - Vacant memory access
-//!           interrupt enable
-//!        - \b SFR_OSCILLATOR_FAULT_INTERRUPT - Oscillator fault interrupt
-//!           enable
-//!        - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT - Watchdog interval timer
-//!           interrupt enable
-//!        - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT - Flash
-//!           controller access violation interrupt enable
-//!
-//! \return None
-//
-//*****************************************************************************
 void SFR_enableInterrupt(uint8_t interruptMask)
 {
-        HWREG8(SFR_BASE + OFS_SFRIE1_L) |= interruptMask;
+    HWREG8(SFR_BASE + OFS_SFRIE1_L) |= interruptMask;
 }
 
-//*****************************************************************************
-//
-//! \brief Disables selected SFR interrupt sources.
-//!
-//! This function disables the selected SFR interrupt sources. Only the sources
-//! that are enabled can be reflected to the processor interrupt; disabled
-//! sources have no effect on the processor.
-//!
-//! \param interruptMask is the bit mask of interrupts that will be disabled.
-//!        Mask value is the logical OR of any of the following:
-//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt enable
-//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt enable
-//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt enable, if NMI
-//!           function is chosen
-//!        - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT - Vacant memory access
-//!           interrupt enable
-//!        - \b SFR_OSCILLATOR_FAULT_INTERRUPT - Oscillator fault interrupt
-//!           enable
-//!        - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT - Watchdog interval timer
-//!           interrupt enable
-//!        - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT - Flash
-//!           controller access violation interrupt enable
-//!
-//! \return None
-//
-//*****************************************************************************
 void SFR_disableInterrupt(uint8_t interruptMask)
 {
-        HWREG8(SFR_BASE + OFS_SFRIE1_L) &= ~(interruptMask);
+    HWREG8(SFR_BASE + OFS_SFRIE1_L) &= ~(interruptMask);
 }
 
-//*****************************************************************************
-//
-//! \brief Returns the status of the selected SFR interrupt flags.
-//!
-//! This function returns the status of the selected SFR interrupt flags in a
-//! bit mask format matching that passed into the interruptFlagMask parameter.
-//!
-//! \param interruptFlagMask is the bit mask of interrupt flags that the status
-//!        of should be returned.
-//!        Mask value is the logical OR of any of the following:
-//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt enable
-//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt enable
-//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt enable, if NMI
-//!           function is chosen
-//!        - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT - Vacant memory access
-//!           interrupt enable
-//!        - \b SFR_OSCILLATOR_FAULT_INTERRUPT - Oscillator fault interrupt
-//!           enable
-//!        - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT - Watchdog interval timer
-//!           interrupt enable
-//!        - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT - Flash
-//!           controller access violation interrupt enable
-//!
-//! \return Logical OR of any of the following:
-//!         - \b SFR_JTAG_OUTBOX_INTERRUPT JTAG outbox interrupt enable
-//!         - \b SFR_JTAG_INBOX_INTERRUPT JTAG inbox interrupt enable
-//!         - \b SFR_NMI_PIN_INTERRUPT NMI pin interrupt enable, if NMI
-//!         function is chosen
-//!         - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT Vacant memory access
-//!         interrupt enable
-//!         - \b SFR_OSCILLATOR_FAULT_INTERRUPT Oscillator fault interrupt
-//!         enable
-//!         - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT Watchdog interval timer
-//!         interrupt enable
-//!         - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT Flash
-//!         controller access violation interrupt enable
-//!         \n indicating the status of the masked interrupts
-//
-//*****************************************************************************
 uint8_t SFR_getInterruptStatus(uint8_t interruptFlagMask)
 {
-        return HWREG8(SFR_BASE + OFS_SFRIFG1_L) & interruptFlagMask;
+    return (HWREG8(SFR_BASE + OFS_SFRIFG1_L) & interruptFlagMask);
 }
 
-//*****************************************************************************
-//
-//! \brief Clears the selected SFR interrupt flags.
-//!
-//! This function clears the status of the selected SFR interrupt flags.
-//!
-//! \param interruptFlagMask is the bit mask of interrupt flags that should be
-//!        cleared
-//!        Mask value is the logical OR of any of the following:
-//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt enable
-//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt enable
-//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt enable, if NMI
-//!           function is chosen
-//!        - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT - Vacant memory access
-//!           interrupt enable
-//!        - \b SFR_OSCILLATOR_FAULT_INTERRUPT - Oscillator fault interrupt
-//!           enable
-//!        - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT - Watchdog interval timer
-//!           interrupt enable
-//!        - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT - Flash
-//!           controller access violation interrupt enable
-//!
-//! \return None
-//
-//*****************************************************************************
 void SFR_clearInterrupt(uint8_t interruptFlagMask)
 {
-        HWREG8(SFR_BASE + OFS_SFRIFG1_L) &= ~(interruptFlagMask);
+    HWREG8(SFR_BASE + OFS_SFRIFG1_L) &= ~(interruptFlagMask);
 }
 
-//*****************************************************************************
-//
-//! \brief Sets the pull-up/down resistor on the ~RST/NMI pin.
-//!
-//! This function sets the pull-up/down resistors on the ~RST/NMI pin to the
-//! settings from the pullResistorSetup parameter.
-//!
-//! \param pullResistorSetup is the selection of how the pull-up/down resistor
-//!        on the ~RST/NMI pin should be setup or disabled.
-//!        Valid values are:
-//!        - \b SFR_RESISTORDISABLE
-//!        - \b SFR_RESISTORENABLE_PULLUP [Default]
-//!        - \b SFR_RESISTORENABLE_PULLDOWN
-//!        \n Modified bits are \b SYSRSTUP of \b SFRRPCR register.
-//!
-//! \return None
-//
-//*****************************************************************************
 void SFR_setResetPinPullResistor(uint16_t pullResistorSetup)
 {
-        HWREG8(SFR_BASE + OFS_SFRRPCR_L) &= ~(SYSRSTRE + SYSRSTUP);
-        HWREG8(SFR_BASE + OFS_SFRRPCR_L) |= pullResistorSetup;
+    HWREG8(SFR_BASE + OFS_SFRRPCR_L) &= ~(SYSRSTRE + SYSRSTUP);
+    HWREG8(SFR_BASE + OFS_SFRRPCR_L) |= pullResistorSetup;
 }
 
-//*****************************************************************************
-//
-//! \brief Sets the edge direction that will assert an NMI from a signal on the
-//! ~RST/NMI pin if NMI function is active.
-//!
-//! This function sets the edge direction that will assert an NMI from a signal
-//! on the ~RST/NMI pin if the NMI function is active. To activate the NMI
-//! function of the ~RST/NMI use the SFR_setResetNMIPinFunction() passing
-//! SFR_RESETPINFUNC_NMI into the resetPinFunction parameter.
-//!
-//! \param edgeDirection is the direction that the signal on the ~RST/NMI pin
-//!        should go to signal an interrupt, if enabled.
-//!        Valid values are:
-//!        - \b SFR_NMI_RISINGEDGE [Default]
-//!        - \b SFR_NMI_FALLINGEDGE
-//!        \n Modified bits are \b SYSNMIIES of \b SFRRPCR register.
-//!
-//! \return None
-//
-//*****************************************************************************
 void SFR_setNMIEdge(uint16_t edgeDirection)
 {
-        HWREG8(SFR_BASE + OFS_SFRRPCR_L) &= ~(SYSNMIIES);
-        HWREG8(SFR_BASE + OFS_SFRRPCR_L) |= edgeDirection;
+    HWREG8(SFR_BASE + OFS_SFRRPCR_L) &= ~(SYSNMIIES);
+    HWREG8(SFR_BASE + OFS_SFRRPCR_L) |= edgeDirection;
 }
 
-//*****************************************************************************
-//
-//! \brief Sets the function of the ~RST/NMI pin.
-//!
-//! This function sets the functionality of the ~RST/NMI pin, whether in reset
-//! mode which will assert a reset if a low signal is observed on that pin, or
-//! an NMI which will assert an interrupt from an edge of the signal dependent
-//! on the setting of the edgeDirection parameter in SFR_setNMIEdge().
-//!
-//! \param resetPinFunction is the function that the ~RST/NMI pin should take
-//!        on.
-//!        Valid values are:
-//!        - \b SFR_RESETPINFUNC_RESET [Default]
-//!        - \b SFR_RESETPINFUNC_NMI
-//!        \n Modified bits are \b SYSNMI of \b SFRRPCR register.
-//!
-//! \return None
-//
-//*****************************************************************************
 void SFR_setResetNMIPinFunction(uint8_t resetPinFunction)
 {
-        HWREG8(SFR_BASE + OFS_SFRRPCR_L) &= ~(SYSNMI);
-        HWREG8(SFR_BASE + OFS_SFRRPCR_L) |= resetPinFunction;
+    HWREG8(SFR_BASE + OFS_SFRRPCR_L) &= ~(SYSNMI);
+    HWREG8(SFR_BASE + OFS_SFRRPCR_L) |= resetPinFunction;
 }
 
 #endif
@@ -271,4 +98,4 @@ void SFR_setResetNMIPinFunction(uint8_t resetPinFunction)
 //! @}
 //
 //*****************************************************************************
-//Released_Version_4_10_02
+//Released_Version_4_20_00

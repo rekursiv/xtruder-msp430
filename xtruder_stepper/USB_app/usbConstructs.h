@@ -61,4 +61,4 @@ uint8_t phdcSendDataInBackground (uint8_t* dataBuf,
     uint8_t intfNum,
     uint32_t ulTimeout);
 uint16_t phdcReceiveDataInBuffer(uint8_t *,uint16_t,uint8_t);
-//Released_Version_4_10_02
+//Released_Version_4_20_00

@@ -22,13 +22,76 @@ uint8_t dataBufferOut[BUFFER_SIZE];
 volatile uint8_t bHIDDataReceived_event = FALSE;  // Flag set by event handler to indicate data has been received into USB buffer
 
 
+volatile uint8_t inPktSize = 0;
+
+
 inline void initUsb() {
     USB_setup(TRUE, TRUE); // Init USB & events; if a host is present, connect
 }
 
 
+inline int readData_TEST() {    //////  TEST
 
-inline void readData() {
+	uint8_t inPktSize = USBHID_bytesInUSBBuffer(HID0_INTFNUM);
+	if (inPktSize>BUFFER_SIZE) {
+		USBHID_rejectData(HID0_INTFNUM);
+	} else if (inPktSize>0) {
+		if (USBHID_receiveData(dataBufferIn, inPktSize, HID0_INTFNUM) == kUSBHID_busNotAvailable) {
+			uint16_t rcvLen;
+			USBHID_abortReceive(&rcvLen, HID0_INTFNUM);
+		} else {
+			curCmd=dataBufferIn[0];
+			if (curCmd==1&&inPktSize==9) {
+				stepMode=dataBufferIn[1];
+				isGain=dataBufferIn[2];
+				holdingTorque=dataBufferIn[3];
+				minTorque=dataBufferIn[4];
+				maxTorque=dataBufferIn[5];
+				torqueDiv=dataBufferIn[6];
+				accelDiv=dataBufferIn[7];
+				accelStep=dataBufferIn[8];
+			} else if (curCmd==2&&inPktSize==3) {
+				P4OUT ^= BIT7;  ///  TEST
+				targetMotorSpeed=(dataBufferIn[1]<<8)|dataBufferIn[2];
+			}
+		}
+	}
+	return inPktSize;
+}
+
+
+
+
+inline int writeData_TEST() {
+
+	// check for error or send in progress
+	// only continue if USBHID_intfStatus() returns 0 (all clear)
+    uint16_t bytesSent, bytesReceived;
+	if (USBHID_intfStatus(HID0_INTFNUM, &bytesSent, &bytesReceived)!=0) return bytesSent;
+
+	// setup packet
+	uint8_t msgLen=6;
+	dataBufferOut[0] = OUT_PKT_TYPE_INFO;
+	dataBufferOut[1] = (curMotorSpeed >> 8) & 0xFF;
+	dataBufferOut[2] = curMotorSpeed & 0xFF;
+	dataBufferOut[3] = curTorque;
+	dataBufferOut[4] = mcStatus;
+	dataBufferOut[5] = inPktSize;
+
+	// send
+	if (USBHID_sendData((uint8_t*)dataBufferOut, msgLen, HID0_INTFNUM)!=kUSBHID_sendStarted) {
+		USBHID_abortSend(&bytesSent, HID0_INTFNUM);
+	}
+
+	return bytesSent;
+
+}
+
+///////////////////
+
+
+
+inline int readData() {
 	uint8_t msgLen = hidReceiveDataInBuffer((uint8_t*)dataBufferIn, BUFFER_SIZE, HID0_INTFNUM);
 	if (msgLen>0) {
 		curCmd=dataBufferIn[0];
@@ -46,14 +109,15 @@ inline void readData() {
 			targetMotorSpeed=(dataBufferIn[1]<<8)|dataBufferIn[2];
 		}
 	}
+	return msgLen;
 }
 
-inline void writeData() {
+inline int writeData() {
 
 	// check for error or send in progress
 	// only continue if USBHID_intfStatus() returns 0 (all clear)
     uint16_t bytesSent, bytesReceived;
-	if (USBHID_intfStatus(HID0_INTFNUM, &bytesSent, &bytesReceived)!=0) return;
+	if (USBHID_intfStatus(HID0_INTFNUM, &bytesSent, &bytesReceived)!=0) return bytesSent;
 
 	// setup packet
 	uint8_t msgLen=5;
@@ -65,9 +129,10 @@ inline void writeData() {
 
 	// send
 	if (USBHID_sendData((uint8_t*)dataBufferOut, msgLen, HID0_INTFNUM)!=kUSBHID_sendStarted) {
-		uint16_t sentLen;
-		USBHID_abortSend(&sentLen, HID0_INTFNUM);
+		USBHID_abortSend(&bytesSent, HID0_INTFNUM);
 	}
+
+	return bytesSent;
 
 }
 
@@ -75,13 +140,16 @@ inline void writeData() {
 // returns 1 upon a successful read and write operation
 // returns 0 if nothing happened (due to no message being available, device not connected, error, etc.)
 inline uint8_t handleUsb() {
+
 	if (USB_connectionState()==ST_ENUM_ACTIVE) {   //  device is enumerated on the USB host
 		if (bHIDDataReceived_event) {
 			bHIDDataReceived_event = FALSE;
-			readData();
-			writeData();
+			readData_TEST();
+			writeData_TEST();
 			return 1;
 		}
+	} else {
+//		P4OUT &= ~BIT7;
 	}
 	return 0;
 }
@@ -91,6 +159,7 @@ inline uint8_t handleUsb() {
 #pragma vector = UNMI_VECTOR
 __interrupt void UNMI_ISR (void)
 {
+
 	switch (__even_in_range(SYSUNIV, SYSUNIV_BUSIFG ))
 	{
 	case SYSUNIV_OFIFG:
@@ -108,4 +177,6 @@ __interrupt void UNMI_ISR (void)
 		USB_disable(); //Disable
 	}
 }
+
+
 

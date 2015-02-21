@@ -1173,4 +1173,4 @@ uint8_t USBHID_bytesInUSBBuffer (uint8_t intfNum)
  | End of source file                                                          |
  +----------------------------------------------------------------------------*/
 /*------------------------ Nothing Below This Line --------------------------*/
-//Released_Version_4_10_02
+//Released_Version_4_20_00

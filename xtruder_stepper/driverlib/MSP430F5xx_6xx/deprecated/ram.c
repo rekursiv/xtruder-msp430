@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@
 
 //*****************************************************************************
 //
-//! \addtogroup ram_api
+//! \addtogroup ram_api ram
 //! @{
 //
 //*****************************************************************************
@@ -52,85 +52,18 @@
 
 #include <assert.h>
 
-//*****************************************************************************
-//
-//! \brief Set specified RAM sector off
-//!
-//! \param baseAddress is the base address of the RAM module.
-//! \param sector is specified sector to be set off.
-//!        Mask value is the logical OR of any of the following:
-//!        - \b RAM_SECTOR0
-//!        - \b RAM_SECTOR1
-//!        - \b RAM_SECTOR2
-//!        - \b RAM_SECTOR3
-//!        - \b RAM_SECTOR4
-//!        - \b RAM_SECTOR5
-//!        - \b RAM_SECTOR6
-//!        - \b RAM_SECTOR7
-//!
-//! Modified bits of \b RCCTL0 register.
-//!
-//! \return None
-//
-//*****************************************************************************
-void RAM_setSectorOff (uint32_t baseAddress,
+void RAM_setSectorOff (uint16_t baseAddress,
     uint8_t sector
     )
 {
-    assert(0x00 == sector & (~(RAM_SECTOR0 +
-                               RAM_SECTOR1 +
-                               RAM_SECTOR2 +
-                               RAM_SECTOR3
-                               )
-                             )
-
-        );
     //Write key to start write to RCCTL0 and sector
     HWREG16(baseAddress + OFS_RCCTL0) = (RCKEY + sector);
 }
 
-//*****************************************************************************
-//
-//! \brief Get RAM sector ON/OFF status
-//!
-//! \param baseAddress is the base address of the RAM module.
-//! \param sector is specified sector
-//!        Mask value is the logical OR of any of the following:
-//!        - \b RAM_SECTOR0
-//!        - \b RAM_SECTOR1
-//!        - \b RAM_SECTOR2
-//!        - \b RAM_SECTOR3
-//!        - \b RAM_SECTOR4
-//!        - \b RAM_SECTOR5
-//!        - \b RAM_SECTOR6
-//!        - \b RAM_SECTOR7
-//!
-//! Modified bits of \b RCCTL0 register.
-//!
-//! \return Logical OR of any of the following:
-//!         - \b RAM_SECTOR0
-//!         - \b RAM_SECTOR1
-//!         - \b RAM_SECTOR2
-//!         - \b RAM_SECTOR3
-//!         - \b RAM_SECTOR4
-//!         - \b RAM_SECTOR5
-//!         - \b RAM_SECTOR6
-//!         - \b RAM_SECTOR7
-//!         \n indicating the status of the masked sectors
-//
-//*****************************************************************************
-uint8_t RAM_getSectorState (uint32_t baseAddress,
+uint8_t RAM_getSectorState (uint16_t baseAddress,
     uint8_t sector
     )
 {
-    assert(0x00 == sector & (~(RAM_SECTOR0 +
-                               RAM_SECTOR1 +
-                               RAM_SECTOR2 +
-                               RAM_SECTOR3
-                               )
-                             )
-
-        );
     return (HWREG8(baseAddress + OFS_RCCTL0_L) & sector);
 }
 
@@ -142,4 +75,4 @@ uint8_t RAM_getSectorState (uint32_t baseAddress,
 //! @}
 //
 //*****************************************************************************
-//Released_Version_4_10_02
+//Released_Version_4_20_00

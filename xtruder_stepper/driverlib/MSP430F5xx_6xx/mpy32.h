@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,16 +53,23 @@ extern "C"
 {
 #endif
 
-//******************************************************************************
+#include "inc/hw_regaccess.h"
+//*****************************************************************************
 //
-// The following is a struct that can be returned by MPY32_getResult64Bit()
+//! \brief Used in the MPY32_getResult64Bit() function as the returned
+//! structure.
 //
-//******************************************************************************
-typedef struct {
-        uint16_t RES0;
-        uint16_t RES1;
-        uint16_t RES2;
-        uint16_t RES3;
+//*****************************************************************************
+typedef struct uint64
+{
+    //! Least signifcant 16 bits
+    uint16_t RES0;
+    //! Second most least signifcant 16 bits
+    uint16_t RES1;
+    //! Second most signifcant 16 bits
+    uint16_t RES2;
+    //! Most signifcant 16 bits
+    uint16_t RES3;
 } uint64;
 
 //*****************************************************************************
@@ -90,52 +97,435 @@ typedef struct {
 
 //*****************************************************************************
 //
+// The following are values that can be passed toThe following are values that
+// can be returned by the MPY32_getSaturationMode() function.
+//
+//*****************************************************************************
+#define MPY32_SATURATION_MODE_DISABLED                                     0x00
+#define MPY32_SATURATION_MODE_ENABLED                                    MPYSAT
+
+//*****************************************************************************
+//
+// The following are values that can be passed toThe following are values that
+// can be returned by the MPY32_getFractionalMode() function.
+//
+//*****************************************************************************
+#define MPY32_FRACTIONAL_MODE_DISABLED                                     0x00
+#define MPY32_FRACTIONAL_MODE_ENABLED                                   MPYFRAC
+
+//*****************************************************************************
+//
 // Prototypes for the APIs.
+//
+//*****************************************************************************
+
+//*****************************************************************************
+//
+//! \brief Sets the write delay setting for the MPY32 module.
+//!
+//! This function sets up a write delay to the MPY module's registers, which
+//! holds any writes to the registers until all calculations are complete.
+//! There are two different settings, one which waits for 32-bit results to be
+//! ready, and one which waits for 64-bit results to be ready. This prevents
+//! unpredicatble results if registers are changed before the results are
+//! ready.
+//!
+//! \param writeDelaySelect delays the write to any MPY32 register until the
+//!        selected bit size of result has been written.
+//!        Valid values are:
+//!        - \b MPY32_WRITEDELAY_OFF [Default] - writes are not delayed
+//!        - \b MPY32_WRITEDELAY_32BIT - writes are delayed until a 32-bit
+//!           result is available in the result registers
+//!        - \b MPY32_WRITEDELAY_64BIT - writes are delayed until a 64-bit
+//!           result is available in the result registers
+//!        \n Modified bits are \b MPYDLY32 and \b MPYDLYWRTEN of \b MPY32CTL0
+//!        register.
+//!
+//! \return None
 //
 //*****************************************************************************
 extern void MPY32_setWriteDelay(uint16_t writeDelaySelect);
 
-extern void MPY32_setSaturationMode(void);
+//*****************************************************************************
+//
+//! \brief Enables Saturation Mode.
+//!
+//! This function enables saturation mode. When this is enabled, the result
+//! read out from the MPY result registers is converted to the most-positive
+//! number in the case of an overflow, or the most-negative number in the case
+//! of an underflow. Please note, that the raw value in the registers does not
+//! reflect the result returned, and if the saturation mode is disabled, then
+//! the raw value of the registers will be returned instead.
+//!
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void MPY32_enableSaturationMode(void);
 
-extern void MPY32_resetSaturationMode(void);
+//*****************************************************************************
+//
+//! \brief Disables Saturation Mode.
+//!
+//! This function disables saturation mode, which allows the raw result of the
+//! MPY result registers to be returned.
+//!
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void MPY32_disableSaturationMode(void);
 
-extern void MPY32_setFractionMode(void);
+//*****************************************************************************
+//
+//! \brief Gets the Saturation Mode.
+//!
+//! This function gets the current saturation mode.
+//!
+//!
+//! \return Gets the Saturation Mode
+//!         Return one of the following:
+//!         - \b MPY32_SATURATION_MODE_DISABLED
+//!         - \b MPY32_SATURATION_MODE_ENABLED
+//!         \n Gets the Saturation Mode
+//
+//*****************************************************************************
+extern uint8_t MPY32_getSaturationMode(void);
 
-extern void MPY32_resetFractionMode(void);
+//*****************************************************************************
+//
+//! \brief Enables Fraction Mode.
+//!
+//! This function enables fraction mode.
+//!
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void MPY32_enableFractionalMode(void);
 
+//*****************************************************************************
+//
+//! \brief Disables Fraction Mode.
+//!
+//! This function disables fraction mode.
+//!
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void MPY32_disableFractionalMode(void);
+
+//*****************************************************************************
+//
+//! \brief Gets the Fractional Mode.
+//!
+//! This function gets the current fractional mode.
+//!
+//!
+//! \return Gets the fractional mode
+//!         Return one of the following:
+//!         - \b MPY32_FRACTIONAL_MODE_DISABLED
+//!         - \b MPY32_FRACTIONAL_MODE_ENABLED
+//!         \n Gets the Fractional Mode
+//
+//*****************************************************************************
+extern uint8_t MPY32_getFractionalMode(void);
+
+//*****************************************************************************
+//
+//! \brief Sets an 8-bit value into operand 1.
+//!
+//! This function sets the first operand for multiplication and determines what
+//! type of operation should be performed. Once the second operand is set, then
+//! the operation will begin.
+//!
+//! \param multiplicationType is the type of multiplication to perform once the
+//!        second operand is set.
+//!        Valid values are:
+//!        - \b MPY32_MULTIPLY_UNSIGNED
+//!        - \b MPY32_MULTIPLY_SIGNED
+//!        - \b MPY32_MULTIPLYACCUMULATE_UNSIGNED
+//!        - \b MPY32_MULTIPLYACCUMULATE_SIGNED
+//! \param operand is the 8-bit value to load into the 1st operand.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void MPY32_setOperandOne8Bit(uint8_t multiplicationType,
                                     uint8_t operand);
 
+//*****************************************************************************
+//
+//! \brief Sets an 16-bit value into operand 1.
+//!
+//! This function sets the first operand for multiplication and determines what
+//! type of operation should be performed. Once the second operand is set, then
+//! the operation will begin.
+//!
+//! \param multiplicationType is the type of multiplication to perform once the
+//!        second operand is set.
+//!        Valid values are:
+//!        - \b MPY32_MULTIPLY_UNSIGNED
+//!        - \b MPY32_MULTIPLY_SIGNED
+//!        - \b MPY32_MULTIPLYACCUMULATE_UNSIGNED
+//!        - \b MPY32_MULTIPLYACCUMULATE_SIGNED
+//! \param operand is the 16-bit value to load into the 1st operand.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void MPY32_setOperandOne16Bit(uint8_t multiplicationType,
                                      uint16_t operand);
 
+//*****************************************************************************
+//
+//! \brief Sets an 24-bit value into operand 1.
+//!
+//! This function sets the first operand for multiplication and determines what
+//! type of operation should be performed. Once the second operand is set, then
+//! the operation will begin.
+//!
+//! \param multiplicationType is the type of multiplication to perform once the
+//!        second operand is set.
+//!        Valid values are:
+//!        - \b MPY32_MULTIPLY_UNSIGNED
+//!        - \b MPY32_MULTIPLY_SIGNED
+//!        - \b MPY32_MULTIPLYACCUMULATE_UNSIGNED
+//!        - \b MPY32_MULTIPLYACCUMULATE_SIGNED
+//! \param operand is the 24-bit value to load into the 1st operand.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void MPY32_setOperandOne24Bit(uint8_t multiplicationType,
                                      uint32_t operand);
 
+//*****************************************************************************
+//
+//! \brief Sets an 32-bit value into operand 1.
+//!
+//! This function sets the first operand for multiplication and determines what
+//! type of operation should be performed. Once the second operand is set, then
+//! the operation will begin.
+//!
+//! \param multiplicationType is the type of multiplication to perform once the
+//!        second operand is set.
+//!        Valid values are:
+//!        - \b MPY32_MULTIPLY_UNSIGNED
+//!        - \b MPY32_MULTIPLY_SIGNED
+//!        - \b MPY32_MULTIPLYACCUMULATE_UNSIGNED
+//!        - \b MPY32_MULTIPLYACCUMULATE_SIGNED
+//! \param operand is the 32-bit value to load into the 1st operand.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void MPY32_setOperandOne32Bit(uint8_t multiplicationType,
                                      uint32_t operand);
 
+//*****************************************************************************
+//
+//! \brief Sets an 8-bit value into operand 2, which starts the multiplication.
+//!
+//! This function sets the second operand of the multiplication operation and
+//! starts the operation.
+//!
+//! \param operand is the 8-bit value to load into the 2nd operand.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void MPY32_setOperandTwo8Bit(uint8_t operand);
 
+//*****************************************************************************
+//
+//! \brief Sets an 16-bit value into operand 2, which starts the
+//! multiplication.
+//!
+//! This function sets the second operand of the multiplication operation and
+//! starts the operation.
+//!
+//! \param operand is the 16-bit value to load into the 2nd operand.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void MPY32_setOperandTwo16Bit(uint16_t operand);
 
+//*****************************************************************************
+//
+//! \brief Sets an 24-bit value into operand 2, which starts the
+//! multiplication.
+//!
+//! This function sets the second operand of the multiplication operation and
+//! starts the operation.
+//!
+//! \param operand is the 24-bit value to load into the 2nd operand.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void MPY32_setOperandTwo24Bit(uint32_t operand);
 
+//*****************************************************************************
+//
+//! \brief Sets an 32-bit value into operand 2, which starts the
+//! multiplication.
+//!
+//! This function sets the second operand of the multiplication operation and
+//! starts the operation.
+//!
+//! \param operand is the 32-bit value to load into the 2nd operand.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void MPY32_setOperandTwo32Bit(uint32_t operand);
 
-extern uint8_t MPY32_getResult8Bit(void);
+//*****************************************************************************
+//
+//! \brief Returns an 64-bit result of the last multiplication operation.
+//!
+//! This function returns all 64 bits of the result registers
+//!
+//!
+//! \return The 64-bit result is returned as a uint64_t type
+//
+//*****************************************************************************
+extern uint64_t MPY32_getResult(void);
 
-extern uint16_t MPY32_getResult16Bit(void);
-
-extern uint32_t MPY32_getResult24Bit(void);
-
-extern uint32_t MPY32_getResult32Bit(void);
-
-extern uint64 MPY32_getResult64Bit(void);
-
+//*****************************************************************************
+//
+//! \brief Returns the Sum Extension of the last multiplication operation.
+//!
+//! This function returns the Sum Extension of the MPY module, which either
+//! gives the sign after a signed operation or shows a carry after a multiply-
+//! and-accumulate operation. The Sum Extension acts as a check for overflows
+//! or underflows.
+//!
+//!
+//! \return The value of the MPY32 module Sum Extension.
+//
+//*****************************************************************************
 extern uint16_t MPY32_getSumExtension(void);
 
+//*****************************************************************************
+//
+//! \brief Returns the Carry Bit of the last multiplication operation.
+//!
+//! This function returns the Carry Bit of the MPY module, which either gives
+//! the sign after a signed operation or shows a carry after a multiply- and-
+//! accumulate operation.
+//!
+//!
+//! \return The value of the MPY32 module Carry Bit 0x0 or 0x1.
+//
+//*****************************************************************************
 extern uint16_t MPY32_getCarryBitValue(void);
+
+//*****************************************************************************
+//
+//! \brief Clears the Carry Bit of the last multiplication operation.
+//!
+//! This function clears the Carry Bit of the MPY module
+//!
+//!
+//! \return The value of the MPY32 module Carry Bit 0x0 or 0x1.
+//
+//*****************************************************************************
+extern void MPY32_clearCarryBitValue(void);
+
+//*****************************************************************************
+//
+//! \brief Preloads the result register
+//!
+//! This function Preloads the result register
+//!
+//! \param result value to preload the result register to
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void MPY32_preloadResult(uint64_t result);
+
+//*****************************************************************************
+//
+// The MPY32_getResult8Bit() API has been deprecated. Instead please use the
+// MPY32_getResult() API.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+extern uint8_t MPY32_getResult8Bit(void);
+#endif
+
+//*****************************************************************************
+//
+// The MPY32_getResult16Bit() API has been deprecated. Instead please use the
+// MPY32_getResult() API.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+extern uint16_t MPY32_getResult16Bit(void);
+#endif
+
+//*****************************************************************************
+//
+// The MPY32_getResult24Bit() API has been deprecated. Instead please use the
+// MPY32_getResult() API.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+extern uint32_t MPY32_getResult24Bit(void);
+#endif
+
+//*****************************************************************************
+//
+// The MPY32_getResult32Bit() API has been deprecated. Instead please use the
+// MPY32_getResult() API.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+extern uint32_t MPY32_getResult32Bit(void);
+#endif
+
+//*****************************************************************************
+//
+// The MPY32_getResult64Bit() API has been deprecated. Instead please use the
+// MPY32_getResult() API.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+extern uint64 MPY32_getResult64Bit(void);
+#endif
+
+//*****************************************************************************
+//
+// The following are deprecated APIs.
+//
+//*****************************************************************************
+#define MPY32_setFractionMode                        MPY32_enableFractionalMode
+
+//*****************************************************************************
+//
+// The following are deprecated APIs.
+//
+//*****************************************************************************
+#define MPY32_resetFractionMode                     MPY32_disableFractionalMode
+
+//*****************************************************************************
+//
+// The following are deprecated APIs.
+//
+//*****************************************************************************
+#define MPY32_setSaturationMode                      MPY32_enableSaturationMode
+
+//*****************************************************************************
+//
+// The following are deprecated APIs.
+//
+//*****************************************************************************
+#define MPY32_resetSaturationMode                   MPY32_disableSaturationMode
 
 //*****************************************************************************
 //
@@ -148,4 +538,4 @@ extern uint16_t MPY32_getCarryBitValue(void);
 
 #endif
 #endif // __MSP430WARE_MPY32_H__
-//Released_Version_4_10_02
+//Released_Version_4_20_00
