@@ -64,6 +64,7 @@ void main(void)	{													//////////////////                 ======== main =
         __bis_SR_register(LPM0_bits + GIE);
         ADC12_A_startConversion(ADC12_A_BASE, ADC12_A_MEMORY_0, ADC12_A_REPEATED_SEQOFCHANNELS);
         handleUsb();
+        P1OUT ^= BIT0;   //  TEST
     }
 }
 

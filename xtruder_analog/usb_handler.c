@@ -26,17 +26,21 @@ inline void initUsb() {
 }
 
 
-inline void readData() {
-	uint8_t msgLen=0;
-	while (USBHID_bytesInUSBBuffer(HID0_INTFNUM)) {
-		msgLen = hidReceiveDataInBuffer((uint8_t*)dataBuffer, BUFFER_SIZE, HID0_INTFNUM);
-		if (msgLen>0) {
-//			cmd=dataBuffer[0];
-		}
+inline int readData() {
+	uint8_t bytesRcvd = USBHID_bytesInUSBBuffer(HID0_INTFNUM);
+	if (bytesRcvd>0) {
+		USBHID_rejectData(HID0_INTFNUM);   //  incoming pkt is simple "ping" no need to decode it
 	}
+	return bytesRcvd;
 }
 
-inline void writeData() {
+inline int writeData() {
+
+	// check for error or send in progress
+	// only continue if USBHID_intfStatus() returns 0 (all clear)
+    uint16_t bytesSent, bytesReceived;
+	if (USBHID_intfStatus(HID0_INTFNUM, &bytesSent, &bytesReceived)!=0) return bytesSent;
+
 	// setup packet
 	uint8_t msgLen=9;
 	dataBuffer[0] = OUT_PKT_TYPE_INFO;
@@ -55,10 +59,17 @@ inline void writeData() {
 	dataBuffer[8] = adcValue[3] & 0xFF;
 
 	// send
-	hidSendDataInBackground((uint8_t*)dataBuffer, msgLen, HID0_INTFNUM, 0);
+	if (USBHID_sendData((uint8_t*)dataBuffer, msgLen, HID0_INTFNUM)!=kUSBHID_sendStarted) {
+		USBHID_abortSend(&bytesSent, HID0_INTFNUM);
+	}
+
+	return bytesSent;
+
 }
 
 
+// returns 1 upon a successful read and write operation
+// returns 0 if nothing happened (due to no message being available, device not connected, error, etc.)
 inline uint8_t handleUsb() {
 	if (USB_connectionState()==ST_ENUM_ACTIVE) {   //  device is enumerated on the USB host
 		if (bHIDDataReceived_event){
@@ -70,7 +81,6 @@ inline uint8_t handleUsb() {
 	}
 	return 0;
 }
-
 
 
 #pragma vector = UNMI_VECTOR
