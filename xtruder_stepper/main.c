@@ -5,7 +5,7 @@
 
 #include "usb_handler.h"
 
-#include "iodef_test.h"  //   TEST     TODO:  re-enable DIR pin !!!!!
+#include "iodef_test.h"  //   TEST
 //#include "iodef_prod.h"
 
 #define SPICLK 1000000
@@ -228,8 +228,8 @@ void main(void)	{													//////////////////                 ======== main =
 				TB0CCR0=calcPeriod();
 
 				// set direction pin
-//				if (curMotorSpeed>0) DIR_PORT |= DIR_PIN;
-//				else DIR_PORT &= ~DIR_PIN;
+				if (curMotorSpeed>0) DIR_PORT |= DIR_PIN;
+				else DIR_PORT &= ~DIR_PIN;
 
 				// process dynamic torque
 				curTorque = calcTorque();
@@ -265,8 +265,6 @@ void main(void)	{													//////////////////                 ======== main =
 
 
 
-
-
 #pragma vector=TIMER0_A0_VECTOR
 __interrupt void TIMER0_A0_ISR (void)
 {
@@ -287,9 +285,6 @@ __interrupt void TIMER0_B0_ISR (void)
 	}
 
 }
-
-
-
 
 
 
