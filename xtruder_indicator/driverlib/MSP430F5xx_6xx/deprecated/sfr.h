@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -103,25 +103,206 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern void SFR_enableInterrupt(uint32_t baseAddress,
+
+//*****************************************************************************
+//
+//! \brief Enables selected SFR interrupt sources.
+//!
+//! This function enables the selected SFR interrupt sources. Only the sources
+//! that are enabled can be reflected to the processor interrupt; disabled
+//! sources have no effect on the processor.
+//!
+//! \param baseAddress is the Base Address of the SFR Module.
+//! \param interruptMask is the bit mask of interrupts that will be enabled.
+//!        Mask value is the logical OR of any of the following:
+//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt enable
+//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt enable
+//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt enable, if NMI
+//!           function is chosen
+//!        - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT - Vacant memory access
+//!           interrupt enable
+//!        - \b SFR_OSCILLATOR_FAULT_INTERRUPT - Oscillator fault interrupt
+//!           enable
+//!        - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT - Watchdog interval timer
+//!           interrupt enable
+//!        - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT - Flash
+//!           controller access violation interrupt enable
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SFR_enableInterrupt(uint16_t baseAddress,
                                 uint8_t interruptMask);
 
-extern void SFR_disableInterrupt(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Disables selected SFR interrupt sources.
+//!
+//! This function disables the selected SFR interrupt sources. Only the sources
+//! that are enabled can be reflected to the processor interrupt; disabled
+//! sources have no effect on the processor.
+//!
+//! \param baseAddress is the Base Address of the SFR Module.
+//! \param interruptMask is the bit mask of interrupts that will be disabled.
+//!        Mask value is the logical OR of any of the following:
+//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt enable
+//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt enable
+//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt enable, if NMI
+//!           function is chosen
+//!        - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT - Vacant memory access
+//!           interrupt enable
+//!        - \b SFR_OSCILLATOR_FAULT_INTERRUPT - Oscillator fault interrupt
+//!           enable
+//!        - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT - Watchdog interval timer
+//!           interrupt enable
+//!        - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT - Flash
+//!           controller access violation interrupt enable
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SFR_disableInterrupt(uint16_t baseAddress,
                                  uint8_t interruptMask);
 
-extern uint8_t SFR_getInterruptStatus(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Returns the status of the selected SFR interrupt flags.
+//!
+//! This function returns the status of the selected SFR interrupt flags in a
+//! bit mask format matching that passed into the interruptFlagMask parameter.
+//!
+//! \param baseAddress is the Base Address of the SFR Module.
+//! \param interruptFlagMask is the bit mask of interrupt flags that the status
+//!        of should be returned.
+//!        Mask value is the logical OR of any of the following:
+//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt enable
+//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt enable
+//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt enable, if NMI
+//!           function is chosen
+//!        - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT - Vacant memory access
+//!           interrupt enable
+//!        - \b SFR_OSCILLATOR_FAULT_INTERRUPT - Oscillator fault interrupt
+//!           enable
+//!        - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT - Watchdog interval timer
+//!           interrupt enable
+//!        - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT - Flash
+//!           controller access violation interrupt enable
+//!
+//! \return Logical OR of any of the following:
+//!         - \b SFR_JTAG_OUTBOX_INTERRUPT JTAG outbox interrupt enable
+//!         - \b SFR_JTAG_INBOX_INTERRUPT JTAG inbox interrupt enable
+//!         - \b SFR_NMI_PIN_INTERRUPT NMI pin interrupt enable, if NMI
+//!         function is chosen
+//!         - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT Vacant memory access
+//!         interrupt enable
+//!         - \b SFR_OSCILLATOR_FAULT_INTERRUPT Oscillator fault interrupt
+//!         enable
+//!         - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT Watchdog interval timer
+//!         interrupt enable
+//!         - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT Flash
+//!         controller access violation interrupt enable
+//!         \n indicating the status of the masked interrupts
+//
+//*****************************************************************************
+extern uint8_t SFR_getInterruptStatus(uint16_t baseAddress,
                                       uint8_t interruptFlagMask);
 
-extern void SFR_clearInterrupt(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Clears the selected SFR interrupt flags.
+//!
+//! This function clears the status of the selected SFR interrupt flags.
+//!
+//! \param baseAddress is the Base Address of the SFR Module.
+//! \param interruptFlagMask is the bit mask of interrupt flags that should be
+//!        cleared
+//!        Mask value is the logical OR of any of the following:
+//!        - \b SFR_JTAG_OUTBOX_INTERRUPT - JTAG outbox interrupt enable
+//!        - \b SFR_JTAG_INBOX_INTERRUPT - JTAG inbox interrupt enable
+//!        - \b SFR_NMI_PIN_INTERRUPT - NMI pin interrupt enable, if NMI
+//!           function is chosen
+//!        - \b SFR_VACANT_MEMORY_ACCESS_INTERRUPT - Vacant memory access
+//!           interrupt enable
+//!        - \b SFR_OSCILLATOR_FAULT_INTERRUPT - Oscillator fault interrupt
+//!           enable
+//!        - \b SFR_WATCHDOG_INTERVAL_TIMER_INTERRUPT - Watchdog interval timer
+//!           interrupt enable
+//!        - \b SFR_FLASH_CONTROLLER_ACCESS_VIOLATION_INTERRUPT - Flash
+//!           controller access violation interrupt enable
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SFR_clearInterrupt(uint16_t baseAddress,
                                uint8_t interruptFlagMask);
 
-extern void SFR_setResetPinPullResistor(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Sets the pull-up/down resistor on the ~RST/NMI pin.
+//!
+//! This function sets the pull-up/down resistors on the ~RST/NMI pin to the
+//! settings from the pullResistorSetup parameter.
+//!
+//! \param baseAddress is the Base Address of the SFR Module.
+//! \param pullResistorSetup is the selection of how the pull-up/down resistor
+//!        on the ~RST/NMI pin should be setup or disabled.
+//!        Valid values are:
+//!        - \b SFR_RESISTORDISABLE
+//!        - \b SFR_RESISTORENABLE_PULLUP [Default]
+//!        - \b SFR_RESISTORENABLE_PULLDOWN
+//!        \n Modified bits are \b SYSRSTUP of \b SFRRPCR register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SFR_setResetPinPullResistor(uint16_t baseAddress,
                                         uint16_t pullResistorSetup);
 
-extern void SFR_setNMIEdge(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Sets the edge direction that will assert an NMI from a signal on the
+//! ~RST/NMI pin if NMI function is active.
+//!
+//! This function sets the edge direction that will assert an NMI from a signal
+//! on the ~RST/NMI pin if the NMI function is active. To activate the NMI
+//! function of the ~RST/NMI use the SFR_setResetNMIPinFunction() passing
+//! SFR_RESETPINFUNC_NMI into the resetPinFunction parameter.
+//!
+//! \param baseAddress is the Base Address of the SFR Module.
+//! \param edgeDirection is the direction that the signal on the ~RST/NMI pin
+//!        should go to signal an interrupt, if enabled.
+//!        Valid values are:
+//!        - \b SFR_NMI_RISINGEDGE [Default]
+//!        - \b SFR_NMI_FALLINGEDGE
+//!        \n Modified bits are \b SYSNMIIES of \b SFRRPCR register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SFR_setNMIEdge(uint16_t baseAddress,
                            uint16_t edgeDirection);
 
-extern void SFR_setResetNMIPinFunction(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Sets the function of the ~RST/NMI pin.
+//!
+//! This function sets the functionality of the ~RST/NMI pin, whether in reset
+//! mode which will assert a reset if a low signal is observed on that pin, or
+//! an NMI which will assert an interrupt from an edge of the signal dependent
+//! on the setting of the edgeDirection parameter in SFR_setNMIEdge().
+//!
+//! \param baseAddress is the Base Address of the SFR Module.
+//! \param resetPinFunction is the function that the ~RST/NMI pin should take
+//!        on.
+//!        Valid values are:
+//!        - \b SFR_RESETPINFUNC_RESET [Default]
+//!        - \b SFR_RESETPINFUNC_NMI
+//!        \n Modified bits are \b SYSNMI of \b SFRRPCR register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SFR_setResetNMIPinFunction(uint16_t baseAddress,
                                        uint8_t resetPinFunction);
 
 //*****************************************************************************
@@ -135,4 +316,4 @@ extern void SFR_setResetNMIPinFunction(uint32_t baseAddress,
 
 #endif
 #endif // __MSP430WARE_SFR_H__
-//Released_Version_4_10_02
+//Released_Version_4_20_00

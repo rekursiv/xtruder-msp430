@@ -413,4 +413,4 @@ uint16_t phdcReceiveDataInBuffer (uint8_t* dataBuf, uint16_t size, uint8_t intfN
 }
 
 #endif
-//Released_Version_4_10_02
+//Released_Version_4_20_00

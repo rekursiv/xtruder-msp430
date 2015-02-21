@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,10 +53,198 @@ extern "C"
 {
 #endif
 
+#include "inc/hw_regaccess.h"
+//*****************************************************************************
+//
+//! \brief Used in the SD24_B_initConverter() function as the param parameter.
+//
+//*****************************************************************************
+typedef struct SD24_B_initConverterParam
+{
+    //! Selects the converter that will be configured. Check datasheet for
+    //! available converters on device.
+    //! \n Valid values are:
+    //! - \b SD24_B_CONVERTER_0
+    //! - \b SD24_B_CONVERTER_1
+    //! - \b SD24_B_CONVERTER_2
+    //! - \b SD24_B_CONVERTER_3
+    //! - \b SD24_B_CONVERTER_4
+    //! - \b SD24_B_CONVERTER_5
+    //! - \b SD24_B_CONVERTER_6
+    //! - \b SD24_B_CONVERTER_7
+    uint8_t converter;
+    //! Selects how the data will be aligned in result
+    //! \n Valid values are:
+    //! - \b SD24_B_ALIGN_RIGHT [Default]
+    //! - \b SD24_B_ALIGN_LEFT
+    uint8_t alignment;
+    //! Selects what will trigger the start of the converter
+    //! \n Valid values are:
+    //! - \b SD24_B_CONVERSION_SELECT_SD24SC [Default]
+    //! - \b SD24_B_CONVERSION_SELECT_EXT1
+    //! - \b SD24_B_CONVERSION_SELECT_EXT2
+    //! - \b SD24_B_CONVERSION_SELECT_EXT3
+    //! - \b SD24_B_CONVERSION_SELECT_GROUP0
+    //! - \b SD24_B_CONVERSION_SELECT_GROUP1
+    //! - \b SD24_B_CONVERSION_SELECT_GROUP2
+    //! - \b SD24_B_CONVERSION_SELECT_GROUP3
+    uint8_t startSelect;
+    //! Determines whether the converter will do continuous samples or a single
+    //! sample
+    //! \n Valid values are:
+    //! - \b SD24_B_CONTINUOUS_MODE [Default]
+    //! - \b SD24_B_SINGLE_MODE
+    uint8_t conversionMode;
+} SD24_B_initConverterParam;
+
+//*****************************************************************************
+//
+//! \brief Used in the SD24_B_initConverterAdvanced() function as the param
+//! parameter.
+//
+//*****************************************************************************
+typedef struct SD24_B_initConverterAdvancedParam
+{
+    //! Selects the converter that will be configured. Check datasheet for
+    //! available converters on device.
+    //! \n Valid values are:
+    //! - \b SD24_B_CONVERTER_0
+    //! - \b SD24_B_CONVERTER_1
+    //! - \b SD24_B_CONVERTER_2
+    //! - \b SD24_B_CONVERTER_3
+    //! - \b SD24_B_CONVERTER_4
+    //! - \b SD24_B_CONVERTER_5
+    //! - \b SD24_B_CONVERTER_6
+    //! - \b SD24_B_CONVERTER_7
+    uint8_t converter;
+    //! Selects how the data will be aligned in result
+    //! \n Valid values are:
+    //! - \b SD24_B_ALIGN_RIGHT [Default]
+    //! - \b SD24_B_ALIGN_LEFT
+    uint8_t alignment;
+    //! Selects what will trigger the start of the converter
+    //! \n Valid values are:
+    //! - \b SD24_B_CONVERSION_SELECT_SD24SC [Default]
+    //! - \b SD24_B_CONVERSION_SELECT_EXT1
+    //! - \b SD24_B_CONVERSION_SELECT_EXT2
+    //! - \b SD24_B_CONVERSION_SELECT_EXT3
+    //! - \b SD24_B_CONVERSION_SELECT_GROUP0
+    //! - \b SD24_B_CONVERSION_SELECT_GROUP1
+    //! - \b SD24_B_CONVERSION_SELECT_GROUP2
+    //! - \b SD24_B_CONVERSION_SELECT_GROUP3
+    uint8_t startSelect;
+    //! Determines whether the converter will do continuous samples or a single
+    //! sample
+    //! \n Valid values are:
+    //! - \b SD24_B_CONTINUOUS_MODE [Default]
+    //! - \b SD24_B_SINGLE_MODE
+    uint8_t conversionMode;
+    //! Selects how the data format of the results
+    //! \n Valid values are:
+    //! - \b SD24_B_DATA_FORMAT_BINARY [Default]
+    //! - \b SD24_B_DATA_FORMAT_2COMPLEMENT
+    uint8_t dataFormat;
+    //! Selects the delay for the interrupt
+    //! \n Valid values are:
+    //! - \b SD24_B_FOURTH_SAMPLE_INTERRUPT [Default]
+    //! - \b SD24_B_THIRD_SAMPLE_INTERRUPT
+    //! - \b SD24_B_SECOND_SAMPLE_INTERRUPT
+    //! - \b SD24_B_FIRST_SAMPLE_INTERRUPT
+    uint8_t sampleDelay;
+    //! Selects oversampling ratio for the converter
+    //! \n Valid values are:
+    //! - \b SD24_B_OVERSAMPLE_32
+    //! - \b SD24_B_OVERSAMPLE_64
+    //! - \b SD24_B_OVERSAMPLE_128
+    //! - \b SD24_B_OVERSAMPLE_256
+    //! - \b SD24_B_OVERSAMPLE_512
+    //! - \b SD24_B_OVERSAMPLE_1024
+    uint16_t oversampleRatio;
+    //! Selects the gain for the converter
+    //! \n Valid values are:
+    //! - \b SD24_B_GAIN_1 [Default]
+    //! - \b SD24_B_GAIN_2
+    //! - \b SD24_B_GAIN_4
+    //! - \b SD24_B_GAIN_8
+    //! - \b SD24_B_GAIN_16
+    //! - \b SD24_B_GAIN_32
+    //! - \b SD24_B_GAIN_64
+    //! - \b SD24_B_GAIN_128
+    uint8_t gain;
+} SD24_B_initConverterAdvancedParam;
+
+//*****************************************************************************
+//
+//! \brief Used in the SD24_B_initialize() function as the param parameter.
+//
+//*****************************************************************************
+typedef struct SD24_B_initializeParam
+{
+    //! Selects the clock that will be used as the SD24_B core
+    //! \n Valid values are:
+    //! - \b SD24_B_CLOCKSOURCE_MCLK [Default]
+    //! - \b SD24_B_CLOCKSOURCE_SMCLK
+    //! - \b SD24_B_CLOCKSOURCE_ACLK
+    //! - \b SD24_B_CLOCKSOURCE_SD24CLK
+    uint16_t clockSourceSelect;
+    //! Selects the amount that the clock will be predivided
+    //! \n Valid values are:
+    //! - \b SD24_B_PRECLOCKDIVIDER_1 [Default]
+    //! - \b SD24_B_PRECLOCKDIVIDER_2
+    //! - \b SD24_B_PRECLOCKDIVIDER_4
+    //! - \b SD24_B_PRECLOCKDIVIDER_8
+    //! - \b SD24_B_PRECLOCKDIVIDER_16
+    //! - \b SD24_B_PRECLOCKDIVIDER_32
+    //! - \b SD24_B_PRECLOCKDIVIDER_64
+    //! - \b SD24_B_PRECLOCKDIVIDER_128
+    uint16_t clockPreDivider;
+    //! Selects the amount that the clock will be divided.
+    //! \n Valid values are:
+    //! - \b SD24_B_CLOCKDIVIDER_1 [Default]
+    //! - \b SD24_B_CLOCKDIVIDER_2
+    //! - \b SD24_B_CLOCKDIVIDER_3
+    //! - \b SD24_B_CLOCKDIVIDER_4
+    //! - \b SD24_B_CLOCKDIVIDER_5
+    //! - \b SD24_B_CLOCKDIVIDER_6
+    //! - \b SD24_B_CLOCKDIVIDER_7
+    //! - \b SD24_B_CLOCKDIVIDER_8
+    //! - \b SD24_B_CLOCKDIVIDER_9
+    //! - \b SD24_B_CLOCKDIVIDER_10
+    //! - \b SD24_B_CLOCKDIVIDER_11
+    //! - \b SD24_B_CLOCKDIVIDER_12
+    //! - \b SD24_B_CLOCKDIVIDER_13
+    //! - \b SD24_B_CLOCKDIVIDER_14
+    //! - \b SD24_B_CLOCKDIVIDER_15
+    //! - \b SD24_B_CLOCKDIVIDER_16
+    //! - \b SD24_B_CLOCKDIVIDER_17
+    //! - \b SD24_B_CLOCKDIVIDER_18
+    //! - \b SD24_B_CLOCKDIVIDER_19
+    //! - \b SD24_B_CLOCKDIVIDER_20
+    //! - \b SD24_B_CLOCKDIVIDER_21
+    //! - \b SD24_B_CLOCKDIVIDER_22
+    //! - \b SD24_B_CLOCKDIVIDER_23
+    //! - \b SD24_B_CLOCKDIVIDER_24
+    //! - \b SD24_B_CLOCKDIVIDER_25
+    //! - \b SD24_B_CLOCKDIVIDER_26
+    //! - \b SD24_B_CLOCKDIVIDER_27
+    //! - \b SD24_B_CLOCKDIVIDER_28
+    //! - \b SD24_B_CLOCKDIVIDER_29
+    //! - \b SD24_B_CLOCKDIVIDER_30
+    //! - \b SD24_B_CLOCKDIVIDER_31
+    //! - \b SD24_B_CLOCKDIVIDER_32
+    uint16_t clockDivider;
+    //! Selects the reference source for the SD24_B core
+    //! \n Valid values are:
+    //! - \b SD24_B_REF_EXTERNAL [Default]
+    //! - \b SD24_B_REF_INTERNAL
+    uint16_t referenceSelect;
+} SD24_B_initializeParam;
+
 //*****************************************************************************
 //
 // The following are values that can be passed to the clockSourceSelect
-// parameter for functions: SD24_B_init().
+// parameter for functions: SD24_B_init(); the param parameter for functions:
+// SD24_B_initialize().
 //
 //*****************************************************************************
 #define SD24_B_CLOCKSOURCE_MCLK                                (SD24SSEL__MCLK)
@@ -67,7 +255,8 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to the referenceSelect parameter
-// for functions: SD24_B_init().
+// for functions: SD24_B_init(); the param parameter for functions:
+// SD24_B_initialize().
 //
 //*****************************************************************************
 #define SD24_B_REF_EXTERNAL                                              (0x00)
@@ -76,7 +265,8 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to the clockPreDivider parameter
-// for functions: SD24_B_init().
+// for functions: SD24_B_init(); the param parameter for functions:
+// SD24_B_initialize().
 //
 //*****************************************************************************
 #define SD24_B_PRECLOCKDIVIDER_1                                   (SD24PDIV_0)
@@ -91,7 +281,8 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to the clockDivider parameter
-// for functions: SD24_B_init().
+// for functions: SD24_B_init(); the param parameter for functions:
+// SD24_B_initialize().
 //
 //*****************************************************************************
 #define SD24_B_CLOCKDIVIDER_1                                            (0x00)
@@ -126,12 +317,13 @@ extern "C"
 #define SD24_B_CLOCKDIVIDER_30      (SD24DIV4 | SD24DIV3 | SD24DIV2 | SD24DIV0)
 #define SD24_B_CLOCKDIVIDER_31      (SD24DIV4 | SD24DIV3 | SD24DIV2 | SD24DIV1)
 #define SD24_B_CLOCKDIVIDER_32                                                \
-        (SD24DIV4 | SD24DIV3 | SD24DIV2 | SD24DIV1 | SD24DIV0)
+    (SD24DIV4 | SD24DIV3 | SD24DIV2 | SD24DIV1 | SD24DIV0)
 
 //*****************************************************************************
 //
-// The following are values that can be passed to the conversionMode parameter
-// for functions: SD24_B_configureConverter(), and
+// The following are values that can be passed to the param parameter for
+// functions: SD24_B_initConverter(), and SD24_B_initConverterAdvanced(); the
+// conversionMode parameter for functions: SD24_B_configureConverter(), and
 // SD24_B_configureConverterAdvanced().
 //
 //*****************************************************************************
@@ -147,7 +339,8 @@ extern "C"
 // SD24_B_setOversampling(), SD24_B_setGain(), SD24_B_getResults(),
 // SD24_B_getHighWordResults(), SD24_B_enableInterrupt(),
 // SD24_B_disableInterrupt(), SD24_B_clearInterrupt(), and
-// SD24_B_getInterruptStatus().
+// SD24_B_getInterruptStatus(); the param parameter for functions:
+// SD24_B_initConverter(), and SD24_B_initConverterAdvanced().
 //
 //*****************************************************************************
 #define SD24_B_CONVERTER_0                                                    0
@@ -161,8 +354,9 @@ extern "C"
 
 //*****************************************************************************
 //
-// The following are values that can be passed to the alignment parameter for
-// functions: SD24_B_configureConverter(), and
+// The following are values that can be passed to the param parameter for
+// functions: SD24_B_initConverter(), and SD24_B_initConverterAdvanced(); the
+// alignment parameter for functions: SD24_B_configureConverter(), and
 // SD24_B_configureConverterAdvanced().
 //
 //*****************************************************************************
@@ -171,9 +365,9 @@ extern "C"
 
 //*****************************************************************************
 //
-// The following are values that can be passed to the startSelect parameter for
-// functions: SD24_B_configureConverter(), and
-// SD24_B_configureConverterAdvanced().
+// The following are values that can be passed to the param parameter for
+// functions: SD24_B_configureConverter(), SD24_B_configureConverterAdvanced(),
+// SD24_B_initConverter(), and SD24_B_initConverterAdvanced().
 //
 //*****************************************************************************
 #define SD24_B_CONVERSION_SELECT_SD24SC                       (SD24SCS__SD24SC)
@@ -187,8 +381,9 @@ extern "C"
 
 //*****************************************************************************
 //
-// The following are values that can be passed to the oversampleRatio parameter
-// for functions: SD24_B_configureConverterAdvanced(), and
+// The following are values that can be passed to the param parameter for
+// functions: SD24_B_initConverterAdvanced(); the oversampleRatio parameter for
+// functions: SD24_B_configureConverterAdvanced(), and
 // SD24_B_setOversampling().
 //
 //*****************************************************************************
@@ -203,7 +398,8 @@ extern "C"
 //
 // The following are values that can be passed to the dataFormat parameter for
 // functions: SD24_B_configureConverterAdvanced(), and
-// SD24_B_setConverterDataFormat().
+// SD24_B_setConverterDataFormat(); the param parameter for functions:
+// SD24_B_initConverterAdvanced().
 //
 //*****************************************************************************
 #define SD24_B_DATA_FORMAT_BINARY                                    (SD24DF_0)
@@ -212,7 +408,8 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to the gain parameter for
-// functions: SD24_B_configureConverterAdvanced(), and SD24_B_setGain().
+// functions: SD24_B_configureConverterAdvanced(), and SD24_B_setGain(); the
+// param parameter for functions: SD24_B_initConverterAdvanced().
 //
 //*****************************************************************************
 #define SD24_B_GAIN_1                                              (SD24GAIN_1)
@@ -228,7 +425,8 @@ extern "C"
 //
 // The following are values that can be passed to the sampleDelay parameter for
 // functions: SD24_B_configureConverterAdvanced(), and
-// SD24_B_setInterruptDelay().
+// SD24_B_setInterruptDelay(); the param parameter for functions:
+// SD24_B_initConverterAdvanced().
 //
 //*****************************************************************************
 #define SD24_B_FOURTH_SAMPLE_INTERRUPT                           (SD24INTDLY_0)
@@ -279,19 +477,537 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern void SD24_B_init(uint32_t baseAddress,
+
+//*****************************************************************************
+//
+//! \brief Initializes the SD24_B Module
+//!
+//! This function initializes the SD24_B module sigma-delta analog-to-digital
+//! conversions. Specifically the function sets up the clock source for the
+//! SD24_B core to use for conversions. Upon completion of the initialization
+//! the SD24_B interrupt registers will be reset and the given parameters will
+//! be set. The converter configuration settings are independent of this
+//! function. The values you choose for the clock divider and predivider are
+//! used to determine the effective clock frequency. The formula used is:
+//! f_sd24 = f_clk /(divider * predivider)
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param param is the pointer to struct for initialization.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_initialize(uint16_t baseAddress,
+                              SD24_B_initializeParam *param);
+
+//*****************************************************************************
+//
+//! \brief Configure SD24_B converter
+//!
+//! This function initializes a converter of the SD24_B module. Upon completion
+//! the converter will be ready for a conversion and can be started with the
+//! SD24_B_startGroupConversion() or SD24_B_startConverterConversion()
+//! depending on the startSelect parameter. Additional configuration such as
+//! data format can be configured in SD24_B_setConverterDataFormat().
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param param is the pointer to struct for converter configuration.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_initConverter(uint16_t baseAddress,
+                                 SD24_B_initConverterParam *param);
+
+//*****************************************************************************
+//
+//! \brief Configure SD24_B converter - Advanced Configure
+//!
+//! This function initializes a converter of the SD24_B module. Upon completion
+//! the converter will be ready for a conversion and can be started with the
+//! SD24_B_startGroupConversion() or SD24_B_startConverterConversion()
+//! depending on the startSelect parameter.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param param is the pointer to struct for converter advanced configuration.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_initConverterAdvanced(uint16_t baseAddress,
+                                         SD24_B_initConverterAdvancedParam *param);
+
+//*****************************************************************************
+//
+//! \brief Set SD24_B converter data format
+//!
+//! This function sets the converter format so that the resulting data can be
+//! viewed in either binary or 2's complement.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param converter selects the converter that will be configured. Check
+//!        datasheet for available converters on device.
+//!        Valid values are:
+//!        - \b SD24_B_CONVERTER_0
+//!        - \b SD24_B_CONVERTER_1
+//!        - \b SD24_B_CONVERTER_2
+//!        - \b SD24_B_CONVERTER_3
+//!        - \b SD24_B_CONVERTER_4
+//!        - \b SD24_B_CONVERTER_5
+//!        - \b SD24_B_CONVERTER_6
+//!        - \b SD24_B_CONVERTER_7
+//! \param dataFormat selects how the data format of the results
+//!        Valid values are:
+//!        - \b SD24_B_DATA_FORMAT_BINARY [Default]
+//!        - \b SD24_B_DATA_FORMAT_2COMPLEMENT
+//!        \n Modified bits are \b SD24DFx of \b SD24BCCTLx register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_setConverterDataFormat(uint16_t baseAddress,
+                                          uint8_t converter,
+                                          uint8_t dataFormat);
+
+//*****************************************************************************
+//
+//! \brief Start Conversion Group
+//!
+//! This function starts all the converters that are associated with a group.
+//! To set a converter to a group use the SD24_B_configureConverter() function.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param group selects the group that will be started
+//!        Valid values are:
+//!        - \b SD24_B_GROUP0
+//!        - \b SD24_B_GROUP1
+//!        - \b SD24_B_GROUP2
+//!        - \b SD24_B_GROUP3
+//!        \n Modified bits are \b SD24DGRPxSC of \b SD24BCTL1 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_startGroupConversion(uint16_t baseAddress,
+                                        uint8_t group);
+
+//*****************************************************************************
+//
+//! \brief Stop Conversion Group
+//!
+//! This function stops all the converters that are associated with a group. To
+//! set a converter to a group use the SD24_B_configureConverter() function.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param group selects the group that will be stopped
+//!        Valid values are:
+//!        - \b SD24_B_GROUP0
+//!        - \b SD24_B_GROUP1
+//!        - \b SD24_B_GROUP2
+//!        - \b SD24_B_GROUP3
+//!        \n Modified bits are \b SD24DGRPxSC of \b SD24BCTL1 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_stopGroupConversion(uint16_t baseAddress,
+                                       uint8_t group);
+
+//*****************************************************************************
+//
+//! \brief Start Conversion for Converter
+//!
+//! This function starts a single converter.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param converter selects the converter that will be started
+//!        Valid values are:
+//!        - \b SD24_B_CONVERTER_0
+//!        - \b SD24_B_CONVERTER_1
+//!        - \b SD24_B_CONVERTER_2
+//!        - \b SD24_B_CONVERTER_3
+//!        - \b SD24_B_CONVERTER_4
+//!        - \b SD24_B_CONVERTER_5
+//!        - \b SD24_B_CONVERTER_6
+//!        - \b SD24_B_CONVERTER_7
+//!        \n Modified bits are \b SD24SC of \b SD24BCCTLx register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_startConverterConversion(uint16_t baseAddress,
+                                            uint8_t converter);
+
+//*****************************************************************************
+//
+//! \brief Stop Conversion for Converter
+//!
+//! This function stops a single converter.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param converter selects the converter that will be stopped
+//!        Valid values are:
+//!        - \b SD24_B_CONVERTER_0
+//!        - \b SD24_B_CONVERTER_1
+//!        - \b SD24_B_CONVERTER_2
+//!        - \b SD24_B_CONVERTER_3
+//!        - \b SD24_B_CONVERTER_4
+//!        - \b SD24_B_CONVERTER_5
+//!        - \b SD24_B_CONVERTER_6
+//!        - \b SD24_B_CONVERTER_7
+//!        \n Modified bits are \b SD24SC of \b SD24BCCTLx register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_stopConverterConversion(uint16_t baseAddress,
+                                           uint8_t converter);
+
+//*****************************************************************************
+//
+//! \brief Configures the converter that triggers a DMA transfer
+//!
+//! This function chooses which interrupt will trigger a DMA transfer.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param interruptFlag selects the converter interrupt that triggers a DMA
+//!        transfer.
+//!        Valid values are:
+//!        - \b SD24_B_DMA_TRIGGER_IFG0
+//!        - \b SD24_B_DMA_TRIGGER_IFG1
+//!        - \b SD24_B_DMA_TRIGGER_IFG2
+//!        - \b SD24_B_DMA_TRIGGER_IFG3
+//!        - \b SD24_B_DMA_TRIGGER_IFG4
+//!        - \b SD24_B_DMA_TRIGGER_IFG5
+//!        - \b SD24_B_DMA_TRIGGER_IFG6
+//!        - \b SD24_B_DMA_TRIGGER_IFG7
+//!        - \b SD24_B_DMA_TRIGGER_TRGIFG
+//!        \n Modified bits are \b SD24DMAx of \b SD24BCTL1 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_configureDMATrigger(uint16_t baseAddress,
+                                       uint16_t interruptFlag);
+
+//*****************************************************************************
+//
+//! \brief Configures the delay for an interrupt to trigger
+//!
+//! This function configures the delay for the first interrupt service request
+//! for the corresponding converter. This feature delays the interrupt request
+//! for a completed conversion by up to four conversion cycles allowing the
+//! digital filter to settle prior to generating an interrupt request.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param converter selects the converter that will be stopped
+//!        Valid values are:
+//!        - \b SD24_B_CONVERTER_0
+//!        - \b SD24_B_CONVERTER_1
+//!        - \b SD24_B_CONVERTER_2
+//!        - \b SD24_B_CONVERTER_3
+//!        - \b SD24_B_CONVERTER_4
+//!        - \b SD24_B_CONVERTER_5
+//!        - \b SD24_B_CONVERTER_6
+//!        - \b SD24_B_CONVERTER_7
+//! \param sampleDelay selects the delay for the interrupt
+//!        Valid values are:
+//!        - \b SD24_B_FOURTH_SAMPLE_INTERRUPT [Default]
+//!        - \b SD24_B_THIRD_SAMPLE_INTERRUPT
+//!        - \b SD24_B_SECOND_SAMPLE_INTERRUPT
+//!        - \b SD24_B_FIRST_SAMPLE_INTERRUPT
+//!        \n Modified bits are \b SD24INTDLYx of \b SD24INCTLx register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_setInterruptDelay(uint16_t baseAddress,
+                                     uint8_t converter,
+                                     uint8_t sampleDelay);
+
+//*****************************************************************************
+//
+//! \brief Configures the oversampling ratio for a converter
+//!
+//! This function configures the oversampling ratio for a given converter.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param converter selects the converter that will be configured
+//!        Valid values are:
+//!        - \b SD24_B_CONVERTER_0
+//!        - \b SD24_B_CONVERTER_1
+//!        - \b SD24_B_CONVERTER_2
+//!        - \b SD24_B_CONVERTER_3
+//!        - \b SD24_B_CONVERTER_4
+//!        - \b SD24_B_CONVERTER_5
+//!        - \b SD24_B_CONVERTER_6
+//!        - \b SD24_B_CONVERTER_7
+//! \param oversampleRatio selects oversampling ratio for the converter
+//!        Valid values are:
+//!        - \b SD24_B_OVERSAMPLE_32
+//!        - \b SD24_B_OVERSAMPLE_64
+//!        - \b SD24_B_OVERSAMPLE_128
+//!        - \b SD24_B_OVERSAMPLE_256
+//!        - \b SD24_B_OVERSAMPLE_512
+//!        - \b SD24_B_OVERSAMPLE_1024
+//!        \n Modified bits are \b SD24OSRx of \b SD24BOSRx register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_setOversampling(uint16_t baseAddress,
+                                   uint8_t converter,
+                                   uint16_t oversampleRatio);
+
+//*****************************************************************************
+//
+//! \brief Configures the gain for the converter
+//!
+//! This function configures the gain for a single converter.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param converter selects the converter that will be configured
+//!        Valid values are:
+//!        - \b SD24_B_CONVERTER_0
+//!        - \b SD24_B_CONVERTER_1
+//!        - \b SD24_B_CONVERTER_2
+//!        - \b SD24_B_CONVERTER_3
+//!        - \b SD24_B_CONVERTER_4
+//!        - \b SD24_B_CONVERTER_5
+//!        - \b SD24_B_CONVERTER_6
+//!        - \b SD24_B_CONVERTER_7
+//! \param gain selects the gain for the converter
+//!        Valid values are:
+//!        - \b SD24_B_GAIN_1 [Default]
+//!        - \b SD24_B_GAIN_2
+//!        - \b SD24_B_GAIN_4
+//!        - \b SD24_B_GAIN_8
+//!        - \b SD24_B_GAIN_16
+//!        - \b SD24_B_GAIN_32
+//!        - \b SD24_B_GAIN_64
+//!        - \b SD24_B_GAIN_128
+//!        \n Modified bits are \b SD24GAINx of \b SD24BINCTLx register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_setGain(uint16_t baseAddress,
+                           uint8_t converter,
+                           uint8_t gain);
+
+//*****************************************************************************
+//
+//! \brief Returns the results for a converter
+//!
+//! This function gets the results from the SD24BMEMLx and SD24MEMHx registers
+//! and concatenates them to form a long. The actual result is a maximum 24
+//! bits.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param converter selects the converter who's results will be returned
+//!        Valid values are:
+//!        - \b SD24_B_CONVERTER_0
+//!        - \b SD24_B_CONVERTER_1
+//!        - \b SD24_B_CONVERTER_2
+//!        - \b SD24_B_CONVERTER_3
+//!        - \b SD24_B_CONVERTER_4
+//!        - \b SD24_B_CONVERTER_5
+//!        - \b SD24_B_CONVERTER_6
+//!        - \b SD24_B_CONVERTER_7
+//!
+//! \return Result of conversion
+//
+//*****************************************************************************
+extern uint32_t SD24_B_getResults(uint16_t baseAddress,
+                                  uint8_t converter);
+
+//*****************************************************************************
+//
+//! \brief Returns the high word results for a converter
+//!
+//! This function gets the results from the SD24MEMHx register and returns it.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param converter selects the converter who's results will be returned
+//!        Valid values are:
+//!        - \b SD24_B_CONVERTER_0
+//!        - \b SD24_B_CONVERTER_1
+//!        - \b SD24_B_CONVERTER_2
+//!        - \b SD24_B_CONVERTER_3
+//!        - \b SD24_B_CONVERTER_4
+//!        - \b SD24_B_CONVERTER_5
+//!        - \b SD24_B_CONVERTER_6
+//!        - \b SD24_B_CONVERTER_7
+//!
+//! \return Result of conversion
+//
+//*****************************************************************************
+extern uint16_t SD24_B_getHighWordResults(uint16_t baseAddress,
+                                          uint8_t converter);
+
+//*****************************************************************************
+//
+//! \brief Enables interrupts for the SD24_B Module
+//!
+//! This function enables interrupts for the SD24_B module. Does not clear
+//! interrupt flags.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param converter is the selected converter.
+//!        Valid values are:
+//!        - \b SD24_B_CONVERTER_0
+//!        - \b SD24_B_CONVERTER_1
+//!        - \b SD24_B_CONVERTER_2
+//!        - \b SD24_B_CONVERTER_3
+//!        - \b SD24_B_CONVERTER_4
+//!        - \b SD24_B_CONVERTER_5
+//!        - \b SD24_B_CONVERTER_6
+//!        - \b SD24_B_CONVERTER_7
+//! \param mask is the bit mask of the converter interrupt sources to be
+//!        enabled.
+//!        Mask value is the logical OR of any of the following:
+//!        - \b SD24_B_CONVERTER_INTERRUPT
+//!        - \b SD24_B_CONVERTER_OVERFLOW_INTERRUPT
+//!        \n Modified bits are \b SD24OVIEx of \b SD24BIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_enableInterrupt(uint16_t baseAddress,
+                                   uint8_t converter,
+                                   uint16_t mask);
+
+//*****************************************************************************
+//
+//! \brief Disables interrupts for the SD24_B Module
+//!
+//! This function disables interrupts for the SD24_B module.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param converter is the selected converter.
+//!        Valid values are:
+//!        - \b SD24_B_CONVERTER_0
+//!        - \b SD24_B_CONVERTER_1
+//!        - \b SD24_B_CONVERTER_2
+//!        - \b SD24_B_CONVERTER_3
+//!        - \b SD24_B_CONVERTER_4
+//!        - \b SD24_B_CONVERTER_5
+//!        - \b SD24_B_CONVERTER_6
+//!        - \b SD24_B_CONVERTER_7
+//! \param mask is the bit mask of the converter interrupt sources to be
+//!        disabled.
+//!        Mask value is the logical OR of any of the following:
+//!        - \b SD24_B_CONVERTER_INTERRUPT
+//!        - \b SD24_B_CONVERTER_OVERFLOW_INTERRUPT
+//!        \n Modified bits are \b SD24OVIEx of \b SD24BIE register.
+//!
+//! Modified bits of \b SD24BIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_disableInterrupt(uint16_t baseAddress,
+                                    uint8_t converter,
+                                    uint16_t mask);
+
+//*****************************************************************************
+//
+//! \brief Clears interrupts for the SD24_B Module
+//!
+//! This function clears interrupt flags for the SD24_B module.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param converter is the selected converter.
+//!        Valid values are:
+//!        - \b SD24_B_CONVERTER_0
+//!        - \b SD24_B_CONVERTER_1
+//!        - \b SD24_B_CONVERTER_2
+//!        - \b SD24_B_CONVERTER_3
+//!        - \b SD24_B_CONVERTER_4
+//!        - \b SD24_B_CONVERTER_5
+//!        - \b SD24_B_CONVERTER_6
+//!        - \b SD24_B_CONVERTER_7
+//! \param mask is the bit mask of the converter interrupt sources to clear.
+//!        Mask value is the logical OR of any of the following:
+//!        - \b SD24_B_CONVERTER_INTERRUPT
+//!        - \b SD24_B_CONVERTER_OVERFLOW_INTERRUPT
+//!        \n Modified bits are \b SD24OVIFGx of \b SD24BIFG register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void SD24_B_clearInterrupt(uint16_t baseAddress,
+                                  uint8_t converter,
+                                  uint16_t mask);
+
+//*****************************************************************************
+//
+//! \brief Returns the interrupt status for the SD24_B Module
+//!
+//! This function returns interrupt flag statuses for the SD24_B module.
+//!
+//! \param baseAddress is the base address of the SD24_B module.
+//! \param converter is the selected converter.
+//!        Valid values are:
+//!        - \b SD24_B_CONVERTER_0
+//!        - \b SD24_B_CONVERTER_1
+//!        - \b SD24_B_CONVERTER_2
+//!        - \b SD24_B_CONVERTER_3
+//!        - \b SD24_B_CONVERTER_4
+//!        - \b SD24_B_CONVERTER_5
+//!        - \b SD24_B_CONVERTER_6
+//!        - \b SD24_B_CONVERTER_7
+//! \param mask is the bit mask of the converter interrupt sources to return.
+//!        Mask value is the logical OR of any of the following:
+//!        - \b SD24_B_CONVERTER_INTERRUPT
+//!        - \b SD24_B_CONVERTER_OVERFLOW_INTERRUPT
+//!
+//! \return Logical OR of any of the following:
+//!         - \b SD24_B_CONVERTER_INTERRUPT
+//!         - \b SD24_B_CONVERTER_OVERFLOW_INTERRUPT
+//!         \n indicating the status of the masked interrupts
+//
+//*****************************************************************************
+extern uint16_t SD24_B_getInterruptStatus(uint16_t baseAddress,
+                                          uint8_t converter,
+                                          uint16_t mask);
+
+//*****************************************************************************
+//
+// The SD24_B_init() API has been deprecated. Instead please use the
+// SD24_B_initialize() API.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+extern void SD24_B_init(uint16_t baseAddress,
                         uint16_t clockSourceSelect,
                         uint16_t clockPreDivider,
                         uint16_t clockDivider,
                         uint16_t referenceSelect);
+#endif
 
-extern void SD24_B_configureConverter(uint32_t baseAddress,
+//*****************************************************************************
+//
+// The SD24_B_configureConverter() API has been deprecated. Instead please use
+// the SD24_B_initConverter() API.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+extern void SD24_B_configureConverter(uint16_t baseAddress,
                                       uint8_t converter,
                                       uint8_t alignment,
                                       uint8_t startSelect,
                                       uint8_t conversionMode);
+#endif
 
-extern void SD24_B_configureConverterAdvanced(uint32_t baseAddress,
+//*****************************************************************************
+//
+// The SD24_B_configureConverterAdvanced() API has been deprecated. Instead
+// please use the SD24_B_initConverterAdvanced() API.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+extern void SD24_B_configureConverterAdvanced(uint16_t baseAddress,
                                               uint8_t converter,
                                               uint8_t alignment,
                                               uint8_t startSelect,
@@ -300,59 +1016,7 @@ extern void SD24_B_configureConverterAdvanced(uint32_t baseAddress,
                                               uint8_t sampleDelay,
                                               uint16_t oversampleRatio,
                                               uint8_t gain);
-
-extern void SD24_B_setConverterDataFormat(uint32_t baseAddress,
-                                          uint8_t converter,
-                                          uint8_t dataFormat);
-
-extern void SD24_B_startGroupConversion(uint32_t baseAddress,
-                                        uint8_t group);
-
-extern void SD24_B_stopGroupConversion(uint32_t baseAddress,
-                                       uint8_t group);
-
-extern void SD24_B_startConverterConversion(uint32_t baseAddress,
-                                            uint8_t converter);
-
-extern void SD24_B_stopConverterConversion(uint32_t baseAddress,
-                                           uint8_t converter);
-
-extern void SD24_B_configureDMATrigger(uint32_t baseAddress,
-                                       uint16_t interruptFlag);
-
-extern void SD24_B_setInterruptDelay(uint32_t baseAddress,
-                                     uint8_t converter,
-                                     uint8_t sampleDelay);
-
-extern void SD24_B_setOversampling(uint32_t baseAddress,
-                                   uint8_t converter,
-                                   uint16_t oversampleRatio);
-
-extern void SD24_B_setGain(uint32_t baseAddress,
-                           uint8_t converter,
-                           uint8_t gain);
-
-extern uint32_t SD24_B_getResults(uint32_t baseAddress,
-                                  uint8_t converter);
-
-extern uint16_t SD24_B_getHighWordResults(uint32_t baseAddress,
-                                          uint8_t converter);
-
-extern void SD24_B_enableInterrupt(uint32_t baseAddress,
-                                   uint8_t converter,
-                                   uint16_t mask);
-
-extern void SD24_B_disableInterrupt(uint32_t baseAddress,
-                                    uint8_t converter,
-                                    uint16_t mask);
-
-extern void SD24_B_clearInterrupt(uint32_t baseAddress,
-                                  uint8_t converter,
-                                  uint16_t mask);
-
-extern uint16_t SD24_B_getInterruptStatus(uint32_t baseAddress,
-                                          uint8_t converter,
-                                          uint16_t mask);
+#endif
 
 //*****************************************************************************
 //
@@ -385,4 +1049,4 @@ extern uint16_t SD24_B_getInterruptStatus(uint32_t baseAddress,
 
 #endif
 #endif // __MSP430WARE_SD24_B_H__
-//Released_Version_4_10_02
+//Released_Version_4_20_00

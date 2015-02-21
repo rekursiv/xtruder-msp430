@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,10 +53,32 @@ extern "C"
 {
 #endif
 
+#include "inc/hw_regaccess.h"
+//*****************************************************************************
+//
+//! \brief Used in the PMAP_initPorts() function as the param parameter.
+//
+//*****************************************************************************
+typedef struct PMAP_initPortsParam
+{
+    //! Is the pointer to init Data
+    const uint8_t* portMapping;
+    //! Is the pointer start of first PMAP to initialize
+    uint8_t* PxMAPy;
+    //! Is the number of Ports to initialize
+    uint8_t numberOfPorts;
+    //! Is used to enable/disable reconfiguration
+    //! \n Valid values are:
+    //! - \b PMAP_ENABLE_RECONFIGURATION
+    //! - \b PMAP_DISABLE_RECONFIGURATION [Default]
+    uint8_t portMapReconfigure;
+} PMAP_initPortsParam;
+
 //*****************************************************************************
 //
 // The following are values that can be passed to the portMapReconfigure
-// parameter for functions: PMAP_configurePorts().
+// parameter for functions: PMAP_configurePorts(); the param parameter for
+// functions: PMAP_initPorts().
 //
 //*****************************************************************************
 #define PMAP_ENABLE_RECONFIGURATION                                   PMAPRECFG
@@ -67,11 +89,34 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern void PMAP_configurePorts(uint32_t baseAddress,
+
+//*****************************************************************************
+//
+//! \brief This function configures the MSP430 Port Mapper
+//!
+//! This function port maps a set of pins to a new set.
+//!
+//!
+//! Modified bits of \b PMAPKETID register and bits of \b PMAPCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMAP_initPorts(uint16_t baseAddress,
+                           PMAP_initPortsParam *param);
+
+//*****************************************************************************
+//
+// The PMAP_configurePorts API has been deprecated.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+extern void PMAP_configurePorts(uint16_t baseAddress,
                                 const uint8_t *portMapping,
                                 uint8_t *PxMAPy,
                                 uint8_t numberOfPorts,
                                 uint8_t portMapReconfigure);
+#endif
 
 //*****************************************************************************
 //
@@ -84,4 +129,4 @@ extern void PMAP_configurePorts(uint32_t baseAddress,
 
 #endif
 #endif // __MSP430WARE_PMAP_H__
-//Released_Version_4_10_02
+//Released_Version_4_20_00

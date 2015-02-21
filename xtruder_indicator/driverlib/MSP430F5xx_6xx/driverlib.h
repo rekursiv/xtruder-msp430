@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@
 #include "adc10_a.h"
 #include "adc12_a.h"
 #include "aes.h"
-#include "bak_batt.h"
+#include "battbak.h"
 #include "comp_b.h"
 #include "crc.h"
 #include "dac12_a.h"
@@ -51,9 +51,9 @@
 #include "eusci_spi.h"
 #include "eusci_uart.h"
 #ifdef DRIVERLIB_LEGACY_MODE
-    #include "deprecated/flash.h"
+    #include "deprecated/flashctl.h"
 #else
-    #include "flash.h"
+    #include "flashctl.h"
 #endif
 #include "gpio.h"
 #include "ldopwr.h"
@@ -84,9 +84,9 @@
     #include "sfr.h"
 #endif
 #ifdef DRIVERLIB_LEGACY_MODE
-    #include "deprecated/sys.h"
+    #include "deprecated/sysctl.h"
 #else
-    #include "sys.h"
+    #include "sysctl.h"
 #endif
 #include "tec.h"
 #include "timer_a.h"
@@ -106,4 +106,4 @@
 #include "usci_spi.h"
 #include "usci_uart.h"
 #include "wdt_a.h"
-//Released_Version_4_10_02
+//Released_Version_4_20_00

@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,10 +45,9 @@
 //
 //*****************************************************************************
 #define HWREG(x)                                                              \
-        (*((volatile unsigned int*)(x)))
+    (*((volatile unsigned int *)(x)))
 #define HWREGB(x)                                                             \
-        (*((volatile unsigned char*)(x)))
-
+    (*((volatile unsigned char *)(x)))
 
 //*****************************************************************************
 //
@@ -59,4 +58,4 @@
 #define STATUS_FAIL     0x00
 
 #endif // #ifndef __HW_TYPES__
-//Released_Version_4_10_02
+//Released_Version_4_20_00

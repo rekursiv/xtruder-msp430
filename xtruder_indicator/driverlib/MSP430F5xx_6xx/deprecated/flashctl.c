@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,13 +31,13 @@
  * --/COPYRIGHT--*/
 //*****************************************************************************
 //
-// flash.c - Driver for the flash Module.
+// flashctl.c - Driver for the flashctl Module.
 //
 //*****************************************************************************
 
 //*****************************************************************************
 //
-//! \addtogroup flash_api
+//! \addtogroup flashctl_api flashctl
 //! @{
 //
 //*****************************************************************************
@@ -48,21 +48,11 @@
 #ifdef DRIVERLIB_LEGACY_MODE
 
 #ifdef __MSP430_HAS_FLASH__
-#include "flash.h"
+#include "flashctl.h"
 
 #include <assert.h>
 
-//*****************************************************************************
-//
-//! \brief Erase a single segment of the flash memory.
-//!
-//! \param baseAddress is the base address of the FLASH module.
-//! \param flash_ptr is the pointer into the flash segment to be erased
-//!
-//! \return None
-//
-//*****************************************************************************
-void FLASH_segmentErase (uint32_t baseAddress, uint8_t *flash_ptr)
+void FlashCtl_segmentErase (uint16_t baseAddress, uint8_t *flash_ptr)
 {
     //Clear Lock bit
     HWREG16(baseAddress + OFS_FCTL3) = FWKEY;
@@ -83,17 +73,7 @@ void FLASH_segmentErase (uint32_t baseAddress, uint8_t *flash_ptr)
     HWREG16(baseAddress + OFS_FCTL3) = FWKEY + LOCK;
 }
 
-//*****************************************************************************
-//
-//! \brief Erase a single bank of the flash memory.
-//!
-//! \param baseAddress is the base address of the FLASH module.
-//! \param flash_ptr is a pointer into the bank to be erased
-//!
-//! \return None
-//
-//*****************************************************************************
-void FLASH_bankErase (uint32_t baseAddress, uint8_t *flash_ptr)
+void FlashCtl_bankErase (uint16_t baseAddress, uint8_t *flash_ptr)
 {
     //Clear Lock bit
     HWREG16(baseAddress + OFS_FCTL3) = FWKEY;
@@ -116,18 +96,30 @@ void FLASH_bankErase (uint32_t baseAddress, uint8_t *flash_ptr)
     HWREG16(baseAddress + OFS_FCTL3) = FWKEY + LOCK;
 }
 
-//*****************************************************************************
-//
-//! \brief Erase check of the flash memory
-//!
-//! \param baseAddress is the base address of the FLASH module.
-//! \param flash_ptr is the pointer to the starting location of the erase check
-//! \param numberOfBytes is the number of bytes to be checked
-//!
-//! \return STATUS_SUCCESS or STATUS_FAIL
-//
-//*****************************************************************************
-bool FLASH_eraseCheck (uint32_t baseAddress,
+void FlashCtl_massErase (uint16_t baseAddress, uint8_t *flash_ptr)
+{
+    //Clear Lock bit
+    HWREG16(baseAddress + OFS_FCTL3) = FWKEY;
+    
+    while (HWREG8(baseAddress + OFS_FCTL3) & BUSY) ;
+
+    //Set MERAS bit
+    HWREG16(baseAddress + OFS_FCTL1) = FWKEY + MERAS + ERASE;
+
+    //Dummy write to erase Flash seg
+    *flash_ptr = 0;
+
+    //test busy
+    while (HWREG8(baseAddress + OFS_FCTL3) & BUSY) ;
+
+    //Clear MERAS bit
+    HWREG16(baseAddress + OFS_FCTL1) = FWKEY;
+
+    //Set LOCK bit
+    HWREG16(baseAddress + OFS_FCTL3) = FWKEY + LOCK;
+}
+
+bool FlashCtl_eraseCheck (uint16_t baseAddress,
     uint8_t *flash_ptr,
     uint16_t numberOfBytes
     )
@@ -144,21 +136,7 @@ bool FLASH_eraseCheck (uint32_t baseAddress,
     return ( STATUS_SUCCESS) ;
 }
 
-//*****************************************************************************
-//
-//! \brief Write data into the flash memory in byte format. Assumes the flash
-//! memory is already erased. FLASH_segmentErase can be used to erase a
-//! segment.
-//!
-//! \param baseAddress is the base address of the FLASH module.
-//! \param data_ptr is the pointer to the data to be written
-//! \param flash_ptr is the pointer into which to write the data
-//! \param count number of times to write the value
-//!
-//! \return None
-//
-//*****************************************************************************
-void FLASH_write8 (uint32_t baseAddress,
+void FlashCtl_write8 (uint16_t baseAddress,
     uint8_t *data_ptr,
     uint8_t *flash_ptr,
     uint16_t count
@@ -187,21 +165,7 @@ void FLASH_write8 (uint32_t baseAddress,
     HWREG16(baseAddress + OFS_FCTL3) = FWKEY + LOCK;
 }
 
-//*****************************************************************************
-//
-//! \brief Write data into the flash memory in word format. Assumes the flash
-//! memory is already erased. FLASH_segmentErase can be used to erase a
-//! segment.
-//!
-//! \param baseAddress is the base address of the FLASH module.
-//! \param data_ptr is the pointer to the data to be written
-//! \param flash_ptr is the pointer into which to write the data
-//! \param count number of times to write the value
-//!
-//! \return None
-//
-//*****************************************************************************
-void FLASH_write16 (uint32_t baseAddress,
+void FlashCtl_write16 (uint16_t baseAddress,
     uint16_t *data_ptr,
     uint16_t *flash_ptr,
     uint16_t count
@@ -230,21 +194,7 @@ void FLASH_write16 (uint32_t baseAddress,
     HWREG16(baseAddress + OFS_FCTL3) = FWKEY + LOCK;
 }
 
-//*****************************************************************************
-//
-//! \brief Write data into the flash memory in long format, pass by reference
-//! Assumes the flash memory is already erased. FLASH_segmentErase can be used
-//! to erase a segment.
-//!
-//! \param baseAddress is the base address of the FLASH module.
-//! \param data_ptr is the pointer to the data to be written
-//! \param flash_ptr is the pointer into which to write the data
-//! \param count number of times to write the value
-//!
-//! \return None
-//
-//*****************************************************************************
-void FLASH_write32 (uint32_t baseAddress,
+void FlashCtl_write32 (uint16_t baseAddress,
     uint32_t *data_ptr,
     uint32_t *flash_ptr,
     uint16_t count
@@ -263,6 +213,7 @@ void FLASH_write32 (uint32_t baseAddress,
 
         //Write to Flash
         *flash_ptr++ = *data_ptr++;
+
         count--;
     }
 
@@ -273,21 +224,7 @@ void FLASH_write32 (uint32_t baseAddress,
     HWREG16(baseAddress + OFS_FCTL3) = FWKEY + LOCK;
 }
 
-//*****************************************************************************
-//
-//! \brief Write data into the flash memory in long format, pass by value
-//! Assumes the flash memory is already erased. FLASH_segmentErase can be used
-//! to erase a segment.
-//!
-//! \param baseAddress is the base address of the FLASH module.
-//! \param value value to fill memory with
-//! \param flash_ptr is the pointer into which to write the data
-//! \param count number of times to write the value
-//!
-//! \return None
-//
-//*****************************************************************************
-void FLASH_memoryFill32 (uint32_t baseAddress,
+void FlashCtl_memoryFill32 (uint16_t baseAddress,
     uint32_t value,
     uint32_t *flash_ptr,
     uint16_t count
@@ -306,6 +243,7 @@ void FLASH_memoryFill32 (uint32_t baseAddress,
 
         //Write to Flash
         *flash_ptr++ = value;
+
         count--;
     }
 
@@ -316,48 +254,14 @@ void FLASH_memoryFill32 (uint32_t baseAddress,
     HWREG16(baseAddress + OFS_FCTL3) = FWKEY + LOCK;
 }
 
-//*****************************************************************************
-//
-//! \brief Check FLASH status to see if it is currently busy erasing or
-//! programming
-//!
-//! \param baseAddress is the base address of the FLASH module.
-//! \param mask FLASH status to read
-//!        Mask value is the logical OR of any of the following:
-//!        - \b FLASH_READY_FOR_NEXT_WRITE
-//!        - \b FLASH_ACCESS_VIOLATION_INTERRUPT_FLAG
-//!        - \b FLASH_PASSWORD_WRITTEN_INCORRECTLY
-//!        - \b FLASH_BUSY
-//!
-//! \return Logical OR of any of the following:
-//!         - \b FLASH_READY_FOR_NEXT_WRITE
-//!         - \b FLASH_ACCESS_VIOLATION_INTERRUPT_FLAG
-//!         - \b FLASH_PASSWORD_WRITTEN_INCORRECTLY
-//!         - \b FLASH_BUSY
-//!         \n indicating the status of the FLASH
-//
-//*****************************************************************************
-uint8_t FLASH_status (uint32_t baseAddress,
+uint8_t FlashCtl_status (uint16_t baseAddress,
     uint8_t mask
     )
 {
     return ((HWREG8(baseAddress + OFS_FCTL3) & mask ));
 }
 
-//*****************************************************************************
-//
-//! \brief Locks the information flash memory segment A
-//!
-//! This function is typically called after an erase or write operation on the
-//! information flash segment is performed by any of the other API functions in
-//! order to re-lock the information flash segment.
-//!
-//! \param baseAddress is the base address of the FLASH module.
-//!
-//! \return None
-//
-//*****************************************************************************
-void FLASH_lockInfoA (uint32_t baseAddress)
+void FlashCtl_lockInfoA (uint16_t baseAddress)
 {
     //Disable global interrupts while doing RMW operation on LOCKA bit
     uint16_t gieStatus;
@@ -375,19 +279,7 @@ void FLASH_lockInfoA (uint32_t baseAddress)
     __bis_SR_register(gieStatus);
 }
 
-//*****************************************************************************
-//
-//! \brief Unlocks the information flash memory segment A
-//!
-//! This function must be called before an erase or write operation on the
-//! information flash segment is performed by any of the other API functions.
-//!
-//! \param baseAddress is the base address of the FLASH module.
-//!
-//! \return None
-//
-//*****************************************************************************
-void FLASH_unlockInfoA (uint32_t baseAddress)
+void FlashCtl_unlockInfoA (uint16_t baseAddress)
 {
     //Disable global interrupts while doing RMW operation on LOCKA bit
     uint16_t gieStatus;
@@ -403,12 +295,14 @@ void FLASH_unlockInfoA (uint32_t baseAddress)
     //Reinstate SR register to restore global interrupt enable status
     __bis_SR_register(gieStatus);
 }
+
+
 #endif
 #endif
 //*****************************************************************************
 //
-//! Close the doxygen group for flash_api
+//! Close the doxygen group for flashctl_api
 //! @}
 //
 //*****************************************************************************
-//Released_Version_4_10_02
+//Released_Version_4_20_00

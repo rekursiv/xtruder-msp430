@@ -288,7 +288,7 @@ void USB_initMemcpy (void);
 uint16_t USB_determineFreq(void);
 
 /* Version string to embed in executable. May need to change for ELF compiler */
-const char *VERSION = "USB_DEVELOPERS_PACKAGE_4_10_02";
+const char *VERSION = "USB_DEVELOPERS_PACKAGE_4_20_00";
 char *USB_getVersion(void)
 {
 	return ((char *)&VERSION);
@@ -338,8 +338,11 @@ uint8_t USB_init (void)
 																				//configuration registers enabled
     /* If USB device is self-powered, USB_SUPPORT_SELF_POWERED = 0xc0 */
 #if (USB_SUPPORT_SELF_POWERED == 0xc0)
+/*USB9 issue fixed in hardware for FG6626.  So no need to turn LDO off*/
+#ifndef __MSP430FG6626__
         /* To fix USB9 enumeration issue */
         USBPWRCTL = 0;
+#endif
 #endif
 	
     USBPHYCTL   =     PUSEL;                                                    //use DP and DM as USB terminals (not needed
@@ -517,47 +520,89 @@ uint8_t USB_enable ()
 #if defined (__MSP430F552x) || defined (__MSP430F550x)
 	GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P5, GPIO_PIN2);
 	GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P5, GPIO_PIN3);
-#elif defined (__MSP430F563x_F663x) || defined (__MSP430F565x_F665x)
+#elif defined (__MSP430F563x_F663x) || defined (__MSP430F565x_F665x) || defined (__MSP430FG6x2x)
 	GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P7, GPIO_PIN2);
 	GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P7, GPIO_PIN3);
 #endif
     USBKEYPID = 0x9628;                                                         //set KEY and PID to 0x9628 -> access to
                                                                                 //configuration registers enabled
 #ifndef DRIVERLIB_LEGACY_MODE
-    if (USB_XT_FREQ_VALUE >= 24) {
-    	status = UCS_XT2StartWithTimeout(
-    			XT2DRIVE_3, 50000);
+    if(USB_XT2_BYPASS_MODE == FALSE){					//XT2 not in bypass mode
+    	if (USB_XT_FREQ_VALUE >= 24) {
+    		status = UCS_XT2StartWithTimeout(
+    	   			XT2DRIVE_3, 50000);
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 16) {
+    		status = UCS_XT2StartWithTimeout(
+    	  			XT2DRIVE_2, 50000);
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 8) {
+    		status = UCS_XT2StartWithTimeout(
+    	   			XT2DRIVE_1, 50000);
+    	}
+    	else {
+    		status = UCS_XT2StartWithTimeout(
+    	 			XT2DRIVE_0, 50000);
+    	}
+
     }
-    else if(USB_XT_FREQ_VALUE >= 16) {
-    	status = UCS_XT2StartWithTimeout(
-    			XT2DRIVE_2, 50000);
-    }
-    else if(USB_XT_FREQ_VALUE >= 8) {
-    	status = UCS_XT2StartWithTimeout(
-    			XT2DRIVE_1, 50000);
-    }
-    else {
-    	status = UCS_XT2StartWithTimeout(
-    			XT2DRIVE_0, 50000);
+    else{												//XT2 in bypass mode
+    	if (USB_XT_FREQ_VALUE >= 24) {
+    		status = UCS_bypassXT2WithTimeout(
+    			50000);
+     	}
+    	else if(USB_XT_FREQ_VALUE >= 16) {
+    		status = UCS_bypassXT2WithTimeout(
+    			 50000);
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 8) {
+    		status = UCS_bypassXT2WithTimeout(
+    			50000);
+    	}
+    	else {
+    		status = UCS_bypassXT2WithTimeout(
+    			50000);
+      	}
     }
 #else
-    if (USB_XT_FREQ_VALUE >= 24) {
-    	status = UCS_XT2StartWithTimeout(UCS_BASE,
+    if(USB_XT2_BYPASS_MODE == FALSE){					//XT2 not in bypass mode
+    	if (USB_XT_FREQ_VALUE >= 24) {
+    		status = UCS_XT2StartWithTimeout(UCS_BASE,
     			XT2DRIVE_3, 50000);
-    }
-    else if(USB_XT_FREQ_VALUE >= 16) {
-    	status = UCS_XT2StartWithTimeout(UCS_BASE,
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 16) {
+    		status = UCS_XT2StartWithTimeout(UCS_BASE,
     			XT2DRIVE_2, 50000);
-    }
-    else if(USB_XT_FREQ_VALUE >= 8) {
-    	status = UCS_XT2StartWithTimeout(UCS_BASE,
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 8) {
+    		status = UCS_XT2StartWithTimeout(UCS_BASE,
     			XT2DRIVE_1, 50000);
-    }
-    else {
-    	status = UCS_XT2StartWithTimeout(UCS_BASE,
+    	}
+    	else {
+    		status = UCS_XT2StartWithTimeout(UCS_BASE,
     			XT2DRIVE_0, 50000);
+    	}
+    }
+    else{												//XT2 in bypass mode
+    	if (USB_XT_FREQ_VALUE >= 24) {
+    	    status = UCS_bypassXT2WithTimeout(UCS_BASE,
+    	    		50000);
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 16) {
+    		status = UCS_bypassXT2WithTimeout(UCS_BASE,
+    	  			50000);
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 8) {
+    		status = UCS_bypassXT2WithTimeout(UCS_BASE,
+    				50000);
+    	}
+    	else {
+    		status = UCS_bypassXT2WithTimeout(UCS_BASE,
+    	   			50000);
+    	}
     }
 #endif
+
 
 	if (status == STATUS_FAIL) {
 		return (kUSB_generalError);
@@ -642,39 +687,86 @@ uint8_t USB_enable_crystal (void)
 #if defined (__MSP430F552x) || defined (__MSP430F550x)
 	GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P5, GPIO_PIN2);
 	GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P5, GPIO_PIN3);
-#elif defined (__MSP430F563x_F663x) || defined (__MSP430F565x_F665x)
+#elif defined (__MSP430F563x_F663x) || defined (__MSP430F565x_F665x) || defined (__MSP430FG6x2x)
 	GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P7, GPIO_PIN2);
 	GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P7, GPIO_PIN3);
 #endif
  
-#ifndef DRIVERLIB_LEGACY_MODE 
-    if (USB_XT_FREQ_VALUE >= 24) {
-    	UCS_XT2StartWithTimeout(XT2DRIVE_3, 1);
-    }
-    else if(USB_XT_FREQ_VALUE >= 16) {
-    	UCS_XT2StartWithTimeout(XT2DRIVE_2, 1);
-    }
-    else if(USB_XT_FREQ_VALUE >= 8) {
-    	UCS_XT2StartWithTimeout(XT2DRIVE_1, 1);
-    }
-    else {
-    	UCS_XT2StartWithTimeout(XT2DRIVE_0, 1);
-    }
+#ifndef DRIVERLIB_LEGACY_MODE
+    if(USB_XT2_BYPASS_MODE == FALSE){					//XT2 not in bypass mode
+    	if (USB_XT_FREQ_VALUE >= 24) {
+    		UCS_XT2StartWithTimeout(
+    	   			XT2DRIVE_3, 50000);
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 16) {
+    		UCS_XT2StartWithTimeout(
+    	  			XT2DRIVE_2, 50000);
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 8) {
+    		UCS_XT2StartWithTimeout(
+    	   			XT2DRIVE_1, 50000);
+    	}
+    	else {
+    		UCS_XT2StartWithTimeout(
+    	 			XT2DRIVE_0, 50000);
+    	}
 
+    }
+    else{												//XT2 in bypass mode
+    	if (USB_XT_FREQ_VALUE >= 24) {
+    		 UCS_bypassXT2WithTimeout(
+    			50000);
+     	}
+    	else if(USB_XT_FREQ_VALUE >= 16) {
+    		 UCS_bypassXT2WithTimeout(
+    			 50000);
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 8) {
+    		 UCS_bypassXT2WithTimeout(
+    			50000);
+    	}
+    	else {
+    		 UCS_bypassXT2WithTimeout(
+    			50000);
+      	}
+    }
 #else
-    if (USB_XT_FREQ_VALUE >= 24) {
-    	UCS_XT2StartWithTimeout(UCS_BASE, XT2DRIVE_3, 1);
+    if(USB_XT2_BYPASS_MODE == FALSE){					//XT2 not in bypass mode
+    	if (USB_XT_FREQ_VALUE >= 24) {
+    		UCS_XT2StartWithTimeout(UCS_BASE,
+    			XT2DRIVE_3, 50000);
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 16) {
+    		UCS_XT2StartWithTimeout(UCS_BASE,
+    			XT2DRIVE_2, 50000);
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 8) {
+    		UCS_XT2StartWithTimeout(UCS_BASE,
+    			XT2DRIVE_1, 50000);
+    	}
+    	else {
+    		UCS_XT2StartWithTimeout(UCS_BASE,
+    			XT2DRIVE_0, 50000);
+    	}
     }
-    else if(USB_XT_FREQ_VALUE >= 16) {
-    	UCS_XT2StartWithTimeout(UCS_BASE, XT2DRIVE_2, 1);
+    else{												//XT2 in bypass mode
+    	if (USB_XT_FREQ_VALUE >= 24) {
+    	    UCS_bypassXT2WithTimeout(UCS_BASE,
+    	    		50000);
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 16) {
+    		UCS_bypassXT2WithTimeout(UCS_BASE,
+    	  			50000);
+    	}
+    	else if(USB_XT_FREQ_VALUE >= 8) {
+    		UCS_bypassXT2WithTimeout(UCS_BASE,
+    				50000);
+    	}
+    	else {
+    		UCS_bypassXT2WithTimeout(UCS_BASE,
+    	   			50000);
+    	}
     }
-    else if(USB_XT_FREQ_VALUE >= 8) {
-    	UCS_XT2StartWithTimeout(UCS_BASE, XT2DRIVE_1, 1);
-    }
-    else {
-    	UCS_XT2StartWithTimeout(UCS_BASE, XT2DRIVE_0, 1);
-    }
-
 #endif
 
     USB_handleCrystalStartedEvent();
@@ -1855,7 +1947,7 @@ uint16_t USB_determineFreq(void){
     if(currentSELM<=4) // MCLK = DCO, DCOCLKDIV, XT1, VLO, or REFO.  The last three aren't supported by the API.
     {
         FLLRefFreq = 33;                    // The reference is usually 32.768 kHz.
-        if((UCSCTL3_L & SELREF_7) > 0x50){  // Unless it's XT2 frequency
+        if((UCSCTL3_L & SELREF_7) >= 0x50){  // Unless it's XT2 frequency
             FLLRefFreq = USB_XT_FREQ_VALUE * 1000;
         }
 
@@ -1871,11 +1963,24 @@ uint16_t USB_determineFreq(void){
         }
 
         currentFLLREFDIV = UCSCTL3_L & FLLREFDIV_7; // get FLL reference divider register
-        if(currentFLLREFDIV>=4)
-        {
-            currentFLLREFDIV = FLLREFDIV_5;
+        if (currentFLLREFDIV == 0) {
+            freq = currentFLLN * (FLLRefFreq / 1);
         }
-        freq = currentFLLN * (FLLRefFreq >> currentFLLREFDIV);
+        else if (currentFLLREFDIV == 1) {
+            freq = currentFLLN * (FLLRefFreq / 2);
+        }
+        else if (currentFLLREFDIV == 2) {
+            freq = currentFLLN * (FLLRefFreq / 4);
+        }
+        else if (currentFLLREFDIV == 3) {
+            freq = currentFLLN * (FLLRefFreq / 8);
+        }
+        else if (currentFLLREFDIV == 4) {
+            freq = currentFLLN * (FLLRefFreq / 12);
+        }
+        else if (currentFLLREFDIV == 5) {
+            freq = currentFLLN * (FLLRefFreq / 16);
+        }
     }
     else
     {
@@ -1893,4 +1998,4 @@ uint16_t USB_determineFreq(void){
  | End of source file                                                          |
  +----------------------------------------------------------------------------*/
 /*------------------------ Nothing Below This Line --------------------------*/
-//Released_Version_4_10_02
+//Released_Version_4_20_00

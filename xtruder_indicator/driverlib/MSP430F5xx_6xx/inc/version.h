@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,8 +31,13 @@
  * --/COPYRIGHT--*/
 #ifndef __DRIVERLIB_VERSION__
         #define DRIVERLIB_VER_MAJOR 1
-        #define DRIVERLIB_VER_MINOR 80
+        #define DRIVERLIB_VER_MINOR 95
         #define DRIVERLIB_VER_PATCH 00
-        #define DRIVERLIB_VER_BUILD 18
+        #define DRIVERLIB_VER_BUILD 49
 #endif
-//Released_Version_4_10_02
+
+#define getVersion() ((uint32_t)DRIVERLIB_VER_MAJOR << 24 | \
+                      (uint32_t)DRIVERLIB_VER_MINOR << 16 | \
+                      (uint32_t)DRIVERLIB_VER_PATCH << 8 | \
+                      (uint32_t)DRIVERLIB_VER_BUILD)
+//Released_Version_4_20_00

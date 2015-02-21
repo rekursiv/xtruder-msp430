@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -89,74 +89,487 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
+
+//*****************************************************************************
+//
+//! \brief Enables the low-side SVS circuitry
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_enableSvsL(void);
 
+//*****************************************************************************
+//
+//! \brief Disables the low-side SVS circuitry
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_disableSvsL(void);
 
+//*****************************************************************************
+//
+//! \brief Enables the low-side SVM circuitry
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_enableSvmL(void);
 
+//*****************************************************************************
+//
+//! \brief Disables the low-side SVM circuitry
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_disableSvmL(void);
 
+//*****************************************************************************
+//
+//! \brief Enables the high-side SVS circuitry
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_enableSvsH(void);
 
+//*****************************************************************************
+//
+//! \brief Disables the high-side SVS circuitry
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_disableSvsH(void);
 
+//*****************************************************************************
+//
+//! \brief Enables the high-side SVM circuitry
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_enableSvmH(void);
 
+//*****************************************************************************
+//
+//! \brief Disables the high-side SVM circuitry
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_disableSvmH(void);
 
+//*****************************************************************************
+//
+//! \brief Enables the low-side SVS and SVM circuitry
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_enableSvsLSvmL(void);
 
+//*****************************************************************************
+//
+//! \brief Disables the low-side SVS and SVM circuitry
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_disableSvsLSvmL(void);
 
+//*****************************************************************************
+//
+//! \brief Enables the high-side SVS and SVM circuitry
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_enableSvsHSvmH(void);
 
+//*****************************************************************************
+//
+//! \brief Disables the high-side SVS and SVM circuitry
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_disableSvsHSvmH(void);
 
+//*****************************************************************************
+//
+//! \brief Enables the POR signal generation when a low-voltage event is
+//! registered by the low-side SVS
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_enableSvsLReset(void);
 
+//*****************************************************************************
+//
+//! \brief Disables the POR signal generation when a low-voltage event is
+//! registered by the low-side SVS
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_disableSvsLReset(void);
 
+//*****************************************************************************
+//
+//! \brief Enables the interrupt generation when a low-voltage event is
+//! registered by the low-side SVM
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_enableSvmLInterrupt(void);
 
+//*****************************************************************************
+//
+//! \brief Disables the interrupt generation when a low-voltage event is
+//! registered by the low-side SVM
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_disableSvmLInterrupt(void);
 
+//*****************************************************************************
+//
+//! \brief Enables the POR signal generation when a low-voltage event is
+//! registered by the high-side SVS
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_enableSvsHReset(void);
 
+//*****************************************************************************
+//
+//! \brief Disables the POR signal generation when a low-voltage event is
+//! registered by the high-side SVS
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_disableSvsHReset(void);
 
+//*****************************************************************************
+//
+//! \brief Enables the interrupt generation when a low-voltage event is
+//! registered by the high-side SVM
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_enableSvmHInterrupt(void);
 
+//*****************************************************************************
+//
+//! \brief Disables the interrupt generation when a low-voltage event is
+//! registered by the high-side SVM
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_disableSvmHInterrupt(void);
 
+//*****************************************************************************
+//
+//! \brief Clear all interrupt flags for the PMM
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIFG register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_clearPMMIFGS(void);
 
+//*****************************************************************************
+//
+//! \brief Enables supervisor low side in LPM with twake-up-fast from LPM2,
+//! LPM3, and LPM4
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_SvsLEnabledInLPMFastWake(void);
 
+//*****************************************************************************
+//
+//! \brief Enables supervisor low side in LPM with twake-up-slow from LPM2,
+//! LPM3, and LPM4
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_SvsLEnabledInLPMSlowWake(void);
 
+//*****************************************************************************
+//
+//! \brief Disables supervisor low side in LPM with twake-up-fast from LPM2,
+//! LPM3, and LPM4
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_SvsLDisabledInLPMFastWake(void);
 
+//*****************************************************************************
+//
+//! \brief Disables supervisor low side in LPM with twake-up-slow from LPM2,
+//! LPM3, and LPM4
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_SvsLDisabledInLPMSlowWake(void);
 
+//*****************************************************************************
+//
+//! \brief Enables supervisor high side in LPM with tpd = 20 ?s(1)
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_SvsHEnabledInLPMNormPerf(void);
 
+//*****************************************************************************
+//
+//! \brief Enables supervisor high side in LPM with tpd = 2.5 ?s(1)
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_SvsHEnabledInLPMFullPerf(void);
 
+//*****************************************************************************
+//
+//! \brief Disables supervisor high side in LPM with tpd = 20 ?s(1)
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_SvsHDisabledInLPMNormPerf(void);
 
+//*****************************************************************************
+//
+//! \brief Disables supervisor high side in LPM with tpd = 2.5 ?s(1)
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_SvsHDisabledInLPMFullPerf(void);
 
+//*****************************************************************************
+//
+//! \brief Optimized to provide twake-up-fast from LPM2, LPM3, and LPM4 with
+//! least power
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_SvsLOptimizedInLPMFastWake(void);
 
+//*****************************************************************************
+//
+//! \brief Optimized to provide tpd = 2.5 ?s(1) in LPM with least power
+//!
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
 extern void PMM_SvsHOptimizedInLPMFullPerf(void);
 
+//*****************************************************************************
+//
+//! \brief Increase Vcore by one level
+//!
+//! \param level level to which Vcore needs to be increased
+//!        Valid values are:
+//!        - \b PMM_CORE_LEVEL_0 [Default]
+//!        - \b PMM_CORE_LEVEL_1
+//!        - \b PMM_CORE_LEVEL_2
+//!        - \b PMM_CORE_LEVEL_3
+//!
+//! Modified bits of \b PMMCTL0 register, bits of \b PMMIFG register, bits of
+//! \b PMMRIE register, bits of \b SVSMHCTL register and bits of \b SVSMLCTL
+//! register.
+//!
+//! \return STATUS_SUCCESS or STATUS_FAIL
+//
+//*****************************************************************************
 extern uint16_t PMM_setVCoreUp(uint8_t level);
 
+//*****************************************************************************
+//
+//! \brief Decrease Vcore by one level
+//!
+//! \param level level to which Vcore needs to be decreased
+//!        Valid values are:
+//!        - \b PMM_CORE_LEVEL_0 [Default]
+//!        - \b PMM_CORE_LEVEL_1
+//!        - \b PMM_CORE_LEVEL_2
+//!        - \b PMM_CORE_LEVEL_3
+//!
+//! Modified bits of \b PMMCTL0 register, bits of \b PMMIFG register, bits of
+//! \b PMMRIE register, bits of \b SVSMHCTL register and bits of \b SVSMLCTL
+//! register.
+//!
+//! \return STATUS_SUCCESS
+//
+//*****************************************************************************
 extern uint16_t PMM_setVCoreDown(uint8_t level);
 
+//*****************************************************************************
+//
+//! \brief Set Vcore to expected level
+//!
+//! \param level level to which Vcore needs to be decreased/increased
+//!        Valid values are:
+//!        - \b PMM_CORE_LEVEL_0 [Default]
+//!        - \b PMM_CORE_LEVEL_1
+//!        - \b PMM_CORE_LEVEL_2
+//!        - \b PMM_CORE_LEVEL_3
+//!
+//! Modified bits of \b PMMCTL0 register, bits of \b PMMIFG register, bits of
+//! \b PMMRIE register, bits of \b SVSMHCTL register and bits of \b SVSMLCTL
+//! register.
+//!
+//! \return STATUS_SUCCESS or STATUS_FAIL
+//
+//*****************************************************************************
 extern bool PMM_setVCore(uint8_t level);
 
+//*****************************************************************************
+//
+//! \brief Returns interrupt status
+//!
+//! \param mask is the mask for specifying the required flag
+//!        Mask value is the logical OR of any of the following:
+//!        - \b PMM_SVSMLDLYIFG
+//!        - \b PMM_SVMLIFG
+//!        - \b PMM_SVMLVLRIFG
+//!        - \b PMM_SVSMHDLYIFG
+//!        - \b PMM_SVMHIFG
+//!        - \b PMM_SVMHVLRIFG
+//!        - \b PMM_PMMBORIFG
+//!        - \b PMM_PMMRSTIFG
+//!        - \b PMM_PMMPORIFG
+//!        - \b PMM_SVSHIFG
+//!        - \b PMM_SVSLIFG
+//!        - \b PMM_PMMLPM5IFG
+//!
+//! \return Logical OR of any of the following:
+//!         - \b PMM_SVSMLDLYIFG
+//!         - \b PMM_SVMLIFG
+//!         - \b PMM_SVMLVLRIFG
+//!         - \b PMM_SVSMHDLYIFG
+//!         - \b PMM_SVMHIFG
+//!         - \b PMM_SVMHVLRIFG
+//!         - \b PMM_PMMBORIFG
+//!         - \b PMM_PMMRSTIFG
+//!         - \b PMM_PMMPORIFG
+//!         - \b PMM_SVSHIFG
+//!         - \b PMM_SVSLIFG
+//!         - \b PMM_PMMLPM5IFG
+//!         \n indicating the status of the masked interrupts
+//
+//*****************************************************************************
 extern uint16_t PMM_getInterruptStatus(uint16_t mask);
 
 //*****************************************************************************
@@ -170,4 +583,4 @@ extern uint16_t PMM_getInterruptStatus(uint16_t mask);
 
 #endif
 #endif // __MSP430WARE_PMM_H__
-//Released_Version_4_10_02
+//Released_Version_4_20_00

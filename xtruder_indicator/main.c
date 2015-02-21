@@ -4,8 +4,10 @@
 
 #include "usb_handler.h"
 
-//#include "iodef_test.h"  //   TEST
-#include "iodef_prod.h"
+#include "iodef_test.h"  //   TEST
+//#include "iodef_prod.h"
+
+#define ZERO 870        //  TEST  1.74mm = 870
 
 #define TIMER_A_PERIOD 3200
 
@@ -98,12 +100,12 @@ __interrupt void PORT1_ISR(void) {
 __interrupt void TIMER0_A0_ISR (void)
 {
 	if ((ZERO_BTN_REG&ZERO_BTN_PIN)==0) {   //  zero btn
-		stepCount=0;
-		stepCountMin=0;
-		stepCountMax=0;
+		stepCount=ZERO;
+		stepCountMin=ZERO;
+		stepCountMax=ZERO;
 	}
 	_enable_interrupts();
-	if (stepCount==0) {
+	if (stepCount==ZERO) {
 		ZERO_LED_PORT |= ZERO_LED_PIN;
 	} else {
 		ZERO_LED_PORT &= ~ZERO_LED_PIN;
