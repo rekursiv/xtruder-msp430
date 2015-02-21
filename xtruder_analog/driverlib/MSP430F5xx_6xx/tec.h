@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,10 +53,47 @@ extern "C"
 {
 #endif
 
+#include "inc/hw_regaccess.h"
+//*****************************************************************************
+//
+//! \brief Used in the TEC_initExternalFaultInput() function as the param
+//! parameter.
+//
+//*****************************************************************************
+typedef struct TEC_initExternalFaultInputParam
+{
+    //! Is the selected external fault
+    //! \n Valid values are:
+    //! - \b TEC_EXTERNAL_FAULT_0
+    //! - \b TEC_EXTERNAL_FAULT_1
+    //! - \b TEC_EXTERNAL_FAULT_2
+    //! - \b TEC_EXTERNAL_FAULT_3
+    //! - \b TEC_EXTERNAL_FAULT_4
+    //! - \b TEC_EXTERNAL_FAULT_5
+    //! - \b TEC_EXTERNAL_FAULT_6
+    uint8_t selectedExternalFault;
+    //! Is the selected signal type
+    //! \n Valid values are:
+    //! - \b TEC_EXTERNAL_FAULT_SIGNALTYPE_EDGE_SENSITIVE [Default]
+    //! - \b TEC_EXTERNAL_FAULT_SIGNALTYPE_LEVEL_SENSITIVE
+    uint16_t signalType;
+    //! Is the selected signal hold
+    //! \n Valid values are:
+    //! - \b TEC_EXTERNAL_FAULT_SIGNAL_NOT_HELD [Default]
+    //! - \b TEC_EXTERNAL_FAULT_SIGNAL_HELD
+    uint8_t signalHold;
+    //! Is the selected signal type
+    //! \n Valid values are:
+    //! - \b TEC_EXTERNAL_FAULT_POLARITY_FALLING_EDGE_OR_LOW_LEVEL [Default]
+    //! - \b TEC_EXTERNAL_FAULT_POLARITY_RISING_EDGE_OR_HIGH_LEVEL
+    uint8_t polarityBit;
+} TEC_initExternalFaultInputParam;
+
 //*****************************************************************************
 //
 // The following are values that can be passed to the signalHold parameter for
-// functions: TEC_configureExternalClearInput().
+// functions: TEC_initExternalClearInput(), and
+// TEC_configureExternalClearInput().
 //
 //*****************************************************************************
 #define TEC_EXTERNAL_CLEAR_SIGNAL_NOT_HELD                                 0x00
@@ -65,7 +102,8 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to the signalHold parameter for
-// functions: TEC_configureExternalFaultInput().
+// functions: TEC_configureExternalFaultInput(); the param parameter for
+// functions: TEC_initExternalFaultInput().
 //
 //*****************************************************************************
 #define TEC_EXTERNAL_FAULT_SIGNAL_NOT_HELD                                 0x00
@@ -74,7 +112,8 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to the polarityBit parameter for
-// functions: TEC_configureExternalClearInput().
+// functions: TEC_initExternalClearInput(), and
+// TEC_configureExternalClearInput().
 //
 //*****************************************************************************
 #define TEC_EXTERNAL_CLEAR_POLARITY_FALLING_EDGE_OR_LOW_LEVEL              0x00
@@ -83,7 +122,8 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to the polarityBit parameter for
-// functions: TEC_configureExternalFaultInput().
+// functions: TEC_configureExternalFaultInput(); the param parameter for
+// functions: TEC_initExternalFaultInput().
 //
 //*****************************************************************************
 #define TEC_EXTERNAL_FAULT_POLARITY_FALLING_EDGE_OR_LOW_LEVEL              0x00
@@ -92,7 +132,8 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to the signalType parameter for
-// functions: TEC_configureExternalClearInput().
+// functions: TEC_initExternalClearInput(), and
+// TEC_configureExternalClearInput().
 //
 //*****************************************************************************
 #define TEC_EXTERNAL_CLEAR_SIGNALTYPE_EDGE_SENSITIVE                       0x00
@@ -100,7 +141,8 @@ extern "C"
 
 //*****************************************************************************
 //
-// The following are values that can be passed to the signalType parameter for
+// The following are values that can be passed to the param parameter for
+// functions: TEC_initExternalFaultInput(); the signalType parameter for
 // functions: TEC_configureExternalFaultInput().
 //
 //*****************************************************************************
@@ -110,7 +152,8 @@ extern "C"
 //*****************************************************************************
 //
 // The following are values that can be passed to the selectedExternalFault
-// parameter for functions: TEC_configureExternalFaultInput().
+// parameter for functions: TEC_configureExternalFaultInput(); the param
+// parameter for functions: TEC_initExternalFaultInput().
 //
 //*****************************************************************************
 #define TEC_EXTERNAL_FAULT_0                                                  0
@@ -164,52 +207,347 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern void TEC_configureExternalClearInput(uint32_t baseAddress,
+
+//*****************************************************************************
+//
+//! \brief Configures the Timer Event Control External Clear Input
+//!
+//! \param baseAddress is the base address of the TEC module.
+//! \param signalType is the selected signal type
+//!        Valid values are:
+//!        - \b TEC_EXTERNAL_CLEAR_SIGNALTYPE_EDGE_SENSITIVE [Default]
+//!        - \b TEC_EXTERNAL_CLEAR_SIGNALTYPE_LEVEL_SENSITIVE
+//! \param signalHold is the selected signal hold
+//!        Valid values are:
+//!        - \b TEC_EXTERNAL_CLEAR_SIGNAL_NOT_HELD [Default]
+//!        - \b TEC_EXTERNAL_CLEAR_SIGNAL_HELD
+//! \param polarityBit is the selected signal type
+//!        Valid values are:
+//!        - \b TEC_EXTERNAL_CLEAR_POLARITY_FALLING_EDGE_OR_LOW_LEVEL [Default]
+//!        - \b TEC_EXTERNAL_CLEAR_POLARITY_RISING_EDGE_OR_HIGH_LEVEL
+//!
+//! Modified bits of \b TECxCTL2 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void TEC_initExternalClearInput(uint16_t baseAddress,
+                                       uint8_t signalType,
+                                       uint8_t signalHold,
+                                       uint8_t polarityBit);
+
+//*****************************************************************************
+//
+//! \brief Configures the Timer Event Control External Fault Input
+//!
+//! \param baseAddress is the base address of the TEC module.
+//! \param param is the pointer to struct for external fault input
+//!        initialization.
+//!
+//! Modified bits of \b TECxCTL2 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void TEC_initExternalFaultInput(uint16_t baseAddress,
+                                       TEC_initExternalFaultInputParam *param);
+
+//*****************************************************************************
+//
+//! \brief Enable the Timer Event Control External fault input
+//!
+//! \param baseAddress is the base address of the TEC module.
+//! \param channelEventBlock selects the channel event block
+//!        Valid values are:
+//!        - \b TEC_CE0
+//!        - \b TEC_CE1
+//!        - \b TEC_CE2
+//!        - \b TEC_CE3 - (available on TEC5 TEC7)
+//!        - \b TEC_CE4 - (available on TEC5 TEC7)
+//!        - \b TEC_CE5 - (only available on TEC7)
+//!        - \b TEC_CE6 - (only available on TEC7)
+//!
+//! Modified bits of \b TECxCTL0 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void TEC_enableExternalFaultInput(uint16_t baseAddress,
+                                         uint8_t channelEventBlock);
+
+//*****************************************************************************
+//
+//! \brief Disable the Timer Event Control External fault input
+//!
+//! \param baseAddress is the base address of the TEC module.
+//! \param channelEventBlock selects the channel event block
+//!        Valid values are:
+//!        - \b TEC_CE0
+//!        - \b TEC_CE1
+//!        - \b TEC_CE2
+//!        - \b TEC_CE3 - (available on TEC5 TEC7)
+//!        - \b TEC_CE4 - (available on TEC5 TEC7)
+//!        - \b TEC_CE5 - (only available on TEC7)
+//!        - \b TEC_CE6 - (only available on TEC7)
+//!
+//! Modified bits of \b TECxCTL0 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void TEC_disableExternalFaultInput(uint16_t baseAddress,
+                                          uint8_t channelEventBlock);
+
+//*****************************************************************************
+//
+//! \brief Enable the Timer Event Control External Clear Input
+//!
+//! \param baseAddress is the base address of the TEC module.
+//!
+//! Modified bits of \b TECxCTL2 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void TEC_enableExternalClearInput(uint16_t baseAddress);
+
+//*****************************************************************************
+//
+//! \brief Disable the Timer Event Control External Clear Input
+//!
+//! \param baseAddress is the base address of the TEC module.
+//!
+//! Modified bits of \b TECxCTL2 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void TEC_disableExternalClearInput(uint16_t baseAddress);
+
+//*****************************************************************************
+//
+//! \brief Enable the Timer Event Control Auxiliary Clear Signal
+//!
+//! \param baseAddress is the base address of the TEC module.
+//!
+//! Modified bits of \b TECxCTL2 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void TEC_enableAuxiliaryClearSignal(uint16_t baseAddress);
+
+//*****************************************************************************
+//
+//! \brief Disable the Timer Event Control Auxiliary Clear Signal
+//!
+//! \param baseAddress is the base address of the TEC module.
+//!
+//! Modified bits of \b TECxCTL2 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void TEC_disableAuxiliaryClearSignal(uint16_t baseAddress);
+
+//*****************************************************************************
+//
+//! \brief Clears the Timer Event Control Interrupt flag
+//!
+//! \param baseAddress is the base address of the TEC module.
+//! \param mask is the masked interrupt flag to be cleared.
+//!        Mask value is the logical OR of any of the following:
+//!        - \b TEC_EXTERNAL_FAULT_INTERRUPT - External fault interrupt flag
+//!        - \b TEC_EXTERNAL_CLEAR_INTERRUPT - External clear interrupt flag
+//!        - \b TEC_AUXILIARY_CLEAR_INTERRUPT - Auxiliary clear interrupt flag
+//!
+//! Modified bits of \b TECxINT register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void TEC_clearInterruptFlag(uint16_t baseAddress,
+                                   uint8_t mask);
+
+//*****************************************************************************
+//
+//! \brief Gets the current Timer Event Control interrupt status.
+//!
+//! This returns the interrupt status for the module based on which flag is
+//! passed.
+//!
+//! \param baseAddress is the base address of the TEC module.
+//! \param mask is the masked interrupt flag status to be returned.
+//!        Mask value is the logical OR of any of the following:
+//!        - \b TEC_EXTERNAL_FAULT_INTERRUPT - External fault interrupt flag
+//!        - \b TEC_EXTERNAL_CLEAR_INTERRUPT - External clear interrupt flag
+//!        - \b TEC_AUXILIARY_CLEAR_INTERRUPT - Auxiliary clear interrupt flag
+//!
+//! \return Logical OR of any of the following:
+//!         - \b TEC_EXTERNAL_FAULT_INTERRUPT External fault interrupt flag
+//!         - \b TEC_EXTERNAL_CLEAR_INTERRUPT External clear interrupt flag
+//!         - \b TEC_AUXILIARY_CLEAR_INTERRUPT Auxiliary clear interrupt flag
+//!         \n indicating the status of the masked interrupts
+//
+//*****************************************************************************
+extern uint8_t TEC_getInterruptStatus(uint16_t baseAddress,
+                                      uint8_t mask);
+
+//*****************************************************************************
+//
+//! \brief Enables individual Timer Event Control interrupt sources.
+//!
+//! Enables the indicated Timer Event Control interrupt sources. Only the
+//! sources that are enabled can be reflected to the processor interrupt;
+//! disabled sources have no effect on the processor. Does not clear interrupt
+//! flags.
+//!
+//! \param baseAddress is the base address of the TEC module.
+//! \param mask is the bit mask of the interrupt sources to be enabled.
+//!        Mask value is the logical OR of any of the following:
+//!        - \b TEC_EXTERNAL_FAULT_INTERRUPT - External fault interrupt flag
+//!        - \b TEC_EXTERNAL_CLEAR_INTERRUPT - External clear interrupt flag
+//!        - \b TEC_AUXILIARY_CLEAR_INTERRUPT - Auxiliary clear interrupt flag
+//!
+//! Modified bits of \b TECxINT register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void TEC_enableInterrupt(uint16_t baseAddress,
+                                uint8_t mask);
+
+//*****************************************************************************
+//
+//! \brief Disables individual Timer Event Control interrupt sources.
+//!
+//! Disables the indicated Timer Event Control interrupt sources. Only the
+//! sources that are enabled can be reflected to the processor interrupt;
+//! disabled sources have no effect on the processor.
+//!
+//! \param baseAddress is the base address of the TEC module.
+//! \param mask is the bit mask of the interrupt sources to be disabled.
+//!        Mask value is the logical OR of any of the following:
+//!        - \b TEC_EXTERNAL_FAULT_INTERRUPT - External fault interrupt flag
+//!        - \b TEC_EXTERNAL_CLEAR_INTERRUPT - External clear interrupt flag
+//!        - \b TEC_AUXILIARY_CLEAR_INTERRUPT - Auxiliary clear interrupt flag
+//!
+//! Modified bits of \b TECxINT register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void TEC_disableInterrupt(uint16_t baseAddress,
+                                 uint8_t mask);
+
+//*****************************************************************************
+//
+//! \brief Gets the current Timer Event Control External Fault Status
+//!
+//! This returns the Timer Event Control fault status for the module.
+//!
+//! \param baseAddress is the base address of the TEC module.
+//! \param mask is the masked interrupt flag status to be returned.
+//!        Mask value is the logical OR of any of the following:
+//!        - \b TEC_CE0
+//!        - \b TEC_CE1
+//!        - \b TEC_CE2
+//!        - \b TEC_CE3 - (available on TEC5 TEC7)
+//!        - \b TEC_CE4 - (available on TEC5 TEC7)
+//!        - \b TEC_CE5 - (only available on TEC7)
+//!        - \b TEC_CE6 - (only available on TEC7)
+//!
+//! \return Logical OR of any of the following:
+//!         - \b TEC_CE0
+//!         - \b TEC_CE1
+//!         - \b TEC_CE2
+//!         - \b TEC_CE3 (available on TEC5 TEC7)
+//!         - \b TEC_CE4 (available on TEC5 TEC7)
+//!         - \b TEC_CE5 (only available on TEC7)
+//!         - \b TEC_CE6 (only available on TEC7)
+//!         \n indicating the external fault status of the masked channel event
+//!         blocks
+//
+//*****************************************************************************
+extern uint8_t TEC_getExternalFaultStatus(uint16_t baseAddress,
+                                          uint8_t mask);
+
+//*****************************************************************************
+//
+//! \brief Clears the Timer Event Control External Fault Status
+//!
+//! \param baseAddress is the base address of the TEC module.
+//! \param mask is the masked status flag be cleared
+//!        Mask value is the logical OR of any of the following:
+//!        - \b TEC_CE0
+//!        - \b TEC_CE1
+//!        - \b TEC_CE2
+//!        - \b TEC_CE3 - (available on TEC5 TEC7)
+//!        - \b TEC_CE4 - (available on TEC5 TEC7)
+//!        - \b TEC_CE5 - (only available on TEC7)
+//!        - \b TEC_CE6 - (only available on TEC7)
+//!
+//! Modified bits of \b TECxINT register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void TEC_clearExternalFaultStatus(uint16_t baseAddress,
+                                         uint8_t mask);
+
+//*****************************************************************************
+//
+//! \brief Gets the current Timer Event Control External Clear Status
+//!
+//! \param baseAddress is the base address of the TEC module.
+//!
+//! \return One of the following:
+//!         - \b TEC_EXTERNAL_CLEAR_DETECTED
+//!         - \b TEC_EXTERNAL_CLEAR_NOT_DETECTED
+//!         \n indicating the status of the external clear
+//
+//*****************************************************************************
+extern uint8_t TEC_getExternalClearStatus(uint16_t baseAddress);
+
+//*****************************************************************************
+//
+//! \brief Clears the Timer Event Control External Clear Status
+//!
+//! \param baseAddress is the base address of the TEC module.
+//!
+//! Modified bits of \b TECxINT register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void TEC_clearExternalClearStatus(uint16_t baseAddress);
+
+//*****************************************************************************
+//
+// The TEC_configureExternalClearInput() API has been deprecated. Instead
+// please use the TEC_initExternalClearInput() API.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+extern void TEC_configureExternalClearInput(uint16_t baseAddress,
                                             uint8_t signalType,
                                             uint8_t signalHold,
                                             uint8_t polarityBit);
+#endif
 
-extern void TEC_configureExternalFaultInput(uint32_t baseAddress,
+//*****************************************************************************
+//
+// The TEC_configureExternalFaultInput() API has been deprecated. Instead
+// please use the TEC_initExternalFaultInput() API.
+//
+//*****************************************************************************
+#ifndef DEPRECATED
+extern void TEC_configureExternalFaultInput(uint16_t baseAddress,
                                             uint8_t selectedExternalFault,
                                             uint16_t signalType,
                                             uint8_t signalHold,
                                             uint8_t polarityBit);
-
-extern void TEC_enableExternalFaultInput(uint32_t baseAddress,
-                                         uint8_t channelEventBlock);
-
-extern void TEC_disableExternalFaultInput(uint32_t baseAddress,
-                                          uint8_t channelEventBlock);
-
-extern void TEC_enableExternalClearInput(uint32_t baseAddress);
-
-extern void TEC_disableExternalClearInput(uint32_t baseAddress);
-
-extern void TEC_enableAuxiliaryClearSignal(uint32_t baseAddress);
-
-extern void TEC_disableAuxiliaryClearSignal(uint32_t baseAddress);
-
-extern void TEC_clearInterruptFlag(uint32_t baseAddress,
-                                   uint8_t mask);
-
-extern uint8_t TEC_getInterruptStatus(uint32_t baseAddress,
-                                      uint8_t mask);
-
-extern void TEC_enableInterrupt(uint32_t baseAddress,
-                                uint8_t mask);
-
-extern void TEC_disableInterrupt(uint32_t baseAddress,
-                                 uint8_t mask);
-
-extern uint8_t TEC_getExternalFaultStatus(uint32_t baseAddress,
-                                          uint8_t mask);
-
-extern void TEC_clearExternalFaultStatus(uint32_t baseAddress,
-                                         uint8_t mask);
-
-extern uint8_t TEC_getExternalClearStatus(uint32_t baseAddress);
-
-extern void TEC_clearExternalClearStatus(uint32_t baseAddress);
+#endif
 
 //*****************************************************************************
 //
@@ -222,4 +560,4 @@ extern void TEC_clearExternalClearStatus(uint32_t baseAddress);
 
 #endif
 #endif // __MSP430WARE_TEC_H__
-//Released_Version_4_10_02
+//Released_Version_4_20_00

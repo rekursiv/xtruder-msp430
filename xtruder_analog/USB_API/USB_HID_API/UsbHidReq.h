@@ -82,4 +82,4 @@ uint8_t usbGetProtocol(void);
 }
 #endif
 #endif  //_UsbHidReq_H_
-//Released_Version_4_10_02
+//Released_Version_4_20_00

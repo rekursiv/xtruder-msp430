@@ -185,4 +185,4 @@ typedef struct _tEDB0 {
 }
 #endif
 #endif                                  /*_defMSP430USB_H    */
-//Released_Version_4_10_02
+//Released_Version_4_20_00

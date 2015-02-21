@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10005,4 +10005,4 @@ sfrl name   = address;
 
 #endif /* #ifndef __msp430F5XX_F6XXGENERIC */
 
-//Released_Version_4_10_02
+//Released_Version_4_20_00

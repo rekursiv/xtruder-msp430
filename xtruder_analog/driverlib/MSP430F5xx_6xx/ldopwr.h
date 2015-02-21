@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -101,59 +101,356 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern void LDOPWR_unLockConfiguration(uint32_t baseAddress);
 
-extern void LDOPWR_lockConfiguration(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Unlocks the configuration registers and enables write access
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! Modified bits of \b LDOKEYPID register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_unLockConfiguration(uint16_t baseAddress);
 
-extern void LDOPWR_enablePort_U_inputs(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Locks the configuration registers and disables write access
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! Modified bits of \b LDOKEYPID register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_lockConfiguration(uint16_t baseAddress);
 
-extern void LDOPWR_disablePort_U_inputs(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables Port U inputs
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! Modified bits of \b PUCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_enablePort_U_inputs(uint16_t baseAddress);
 
-extern void LDOPWR_enablePort_U_outputs(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables Port U inputs
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! Modified bits of \b PUCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_disablePort_U_inputs(uint16_t baseAddress);
 
-extern void LDOPWR_disablePort_U_outputs(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables Port U outputs
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! Modified bits of \b PUCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_enablePort_U_outputs(uint16_t baseAddress);
 
-extern uint8_t LDOPWR_getPort_U1_inputData(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables Port U inputs
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! Modified bits of \b PUCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_disablePort_U_outputs(uint16_t baseAddress);
 
-extern uint8_t LDOPWR_getPort_U0_inputData(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Returns PU.1 input data
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! \return One of the following:
+//!         - \b LDOPWR_PORTU_PIN_HIGH
+//!         - \b LDOPWR_PORTU_PIN_LOW
+//
+//*****************************************************************************
+extern uint8_t LDOPWR_getPort_U1_inputData(uint16_t baseAddress);
 
-extern uint8_t LDOPWR_getPort_U1_outputData(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Returns PU.0 input data
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! \return One of the following:
+//!         - \b LDOPWR_PORTU_PIN_HIGH
+//!         - \b LDOPWR_PORTU_PIN_LOW
+//
+//*****************************************************************************
+extern uint8_t LDOPWR_getPort_U0_inputData(uint16_t baseAddress);
 
-extern uint8_t LDOPWR_getPort_U0_outputData(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Returns PU.1 output data
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! \return One of the following:
+//!         - \b LDOPWR_PORTU_PIN_HIGH
+//!         - \b LDOPWR_PORTU_PIN_LOW
+//
+//*****************************************************************************
+extern uint8_t LDOPWR_getPort_U1_outputData(uint16_t baseAddress);
 
-extern void LDOPWR_setPort_U1_outputData(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Returns PU.0 output data
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! \return One of the following:
+//!         - \b LDOPWR_PORTU_PIN_HIGH
+//!         - \b LDOPWR_PORTU_PIN_LOW
+//
+//*****************************************************************************
+extern uint8_t LDOPWR_getPort_U0_outputData(uint16_t baseAddress);
+
+//*****************************************************************************
+//
+//! \brief Sets PU.1 output data
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//! \param value
+//!        Valid values are:
+//!        - \b LDOPWR_PORTU_PIN_HIGH
+//!        - \b LDOPWR_PORTU_PIN_LOW
+//!
+//! Modified bits of \b PUCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_setPort_U1_outputData(uint16_t baseAddress,
                                          uint8_t value);
 
-extern void LDOPWR_setPort_U0_outputData(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Sets PU.0 output data
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//! \param value
+//!        Valid values are:
+//!        - \b LDOPWR_PORTU_PIN_HIGH
+//!        - \b LDOPWR_PORTU_PIN_LOW
+//!
+//! Modified bits of \b PUCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_setPort_U0_outputData(uint16_t baseAddress,
                                          uint8_t value);
 
-extern void LDOPWR_togglePort_U1_outputData(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Toggles PU.1 output data
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! Modified bits of \b PUCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_togglePort_U1_outputData(uint16_t baseAddress);
 
-extern void LDOPWR_togglePort_U0_outputData(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Toggles PU.0 output data
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! Modified bits of \b PUCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_togglePort_U0_outputData(uint16_t baseAddress);
 
-extern void LDOPWR_enableInterrupt(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Enables LDO-PWR module interrupts
+//!
+//! Does not clear interrupt flags.
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//! \param mask mask of interrupts to enable
+//!        Mask value is the logical OR of any of the following:
+//!        - \b LDOPWR_LDOI_VOLTAGE_GOING_OFF_INTERRUPT
+//!        - \b LDOPWR_LDOI_VOLTAGE_COMING_ON_INTERRUPT
+//!        - \b LDOPWR_LDO_OVERLOAD_INDICATION_INTERRUPT
+//!
+//! Modified bits of \b LDOPWRCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_enableInterrupt(uint16_t baseAddress,
                                    uint16_t mask);
 
-extern void LDOPWR_disableInterrupt(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Disables LDO-PWR module interrupts
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//! \param mask mask of interrupts to disable
+//!        Mask value is the logical OR of any of the following:
+//!        - \b LDOPWR_LDOI_VOLTAGE_GOING_OFF_INTERRUPT
+//!        - \b LDOPWR_LDOI_VOLTAGE_COMING_ON_INTERRUPT
+//!        - \b LDOPWR_LDO_OVERLOAD_INDICATION_INTERRUPT
+//!
+//! Modified bits of \b LDOPWRCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_disableInterrupt(uint16_t baseAddress,
                                     uint16_t mask);
 
-extern void LDOPWR_enable(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables LDO-PWR module
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! Modified bits of \b LDOPWRCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_enable(uint16_t baseAddress);
 
-extern void LDOPWR_disable(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables LDO-PWR module
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! Modified bits of \b LDOPWRCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_disable(uint16_t baseAddress);
 
-extern uint8_t LDOPWR_getInterruptStatus(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Returns the interrupt status of LDO-PWR module interrupts
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//! \param mask mask of interrupts to get the status of
+//!        Mask value is the logical OR of any of the following:
+//!        - \b LDOPWR_LDOI_VOLTAGE_GOING_OFF_INTERRUPT
+//!        - \b LDOPWR_LDOI_VOLTAGE_COMING_ON_INTERRUPT
+//!        - \b LDOPWR_LDO_OVERLOAD_INDICATION_INTERRUPT
+//!
+//! \return Logical OR of any of the following:
+//!         - \b LDOPWR_LDOI_VOLTAGE_GOING_OFF_INTERRUPT
+//!         - \b LDOPWR_LDOI_VOLTAGE_COMING_ON_INTERRUPT
+//!         - \b LDOPWR_LDO_OVERLOAD_INDICATION_INTERRUPT
+//!         \n indicating the status of the masked interrupts
+//
+//*****************************************************************************
+extern uint8_t LDOPWR_getInterruptStatus(uint16_t baseAddress,
                                          uint16_t mask);
 
-extern void LDOPWR_clearInterruptStatus(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Clears the interrupt status of LDO-PWR module interrupts
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//! \param mask mask of interrupts to clear the status of
+//!        Mask value is the logical OR of any of the following:
+//!        - \b LDOPWR_LDOI_VOLTAGE_GOING_OFF_INTERRUPT
+//!        - \b LDOPWR_LDOI_VOLTAGE_COMING_ON_INTERRUPT
+//!        - \b LDOPWR_LDO_OVERLOAD_INDICATION_INTERRUPT
+//!
+//! Modified bits of \b LDOPWRCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_clearInterruptStatus(uint16_t baseAddress,
                                         uint16_t mask);
 
-extern uint8_t LDOPWR_isLDOInputValid(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Returns if the the LDOI is valid and within bounds
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! \return One of the following:
+//!         - \b LDOPWR_LDO_INPUT_VALID
+//!         - \b LDOPWR_LDO_INPUT_INVALID
+//
+//*****************************************************************************
+extern uint8_t LDOPWR_isLDOInputValid(uint16_t baseAddress);
 
-extern void LDOPWR_enableOverloadAutoOff(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables the LDO overload auto-off
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! Modified bits of \b LDOPWRCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_enableOverloadAutoOff(uint16_t baseAddress);
 
-extern void LDOPWR_disableOverloadAutoOff(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables the LDO overload auto-off
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! Modified bits of \b LDOPWRCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void LDOPWR_disableOverloadAutoOff(uint16_t baseAddress);
 
-extern uint8_t LDOPWR_getOverloadAutoOffStatus(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Returns if the LDOI overload auto-off is enabled or disabled
+//!
+//! \param baseAddress is the base address of the LDOPWR module.
+//!
+//! \return One of the following:
+//!         - \b LDOPWR_AUTOOFF_ENABLED
+//!         - \b LDOPWR_AUTOOFF_DISABLED
+//
+//*****************************************************************************
+extern uint8_t LDOPWR_getOverloadAutoOffStatus(uint16_t baseAddress);
 
 //*****************************************************************************
 //
@@ -166,4 +463,4 @@ extern uint8_t LDOPWR_getOverloadAutoOffStatus(uint32_t baseAddress);
 
 #endif
 #endif // __MSP430WARE_LDOPWR_H__
-//Released_Version_4_10_02
+//Released_Version_4_20_00

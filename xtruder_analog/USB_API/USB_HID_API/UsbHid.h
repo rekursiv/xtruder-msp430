@@ -201,4 +201,4 @@ uint8_t *USBHID_handleEP0GetReport (uint8_t reportType, uint8_t reportId,
 }
 #endif
 #endif  //_UsbHid_H_
-//Released_Version_4_10_02
+//Released_Version_4_20_00

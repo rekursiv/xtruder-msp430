@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -89,78 +89,526 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern void PMM_enableSvsL(uint32_t baseAddress);
 
-extern void PMM_disableSvsL(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables the low-side SVS circuitry
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_enableSvsL(uint16_t baseAddress);
 
-extern void PMM_enableSvmL(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables the low-side SVS circuitry
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_disableSvsL(uint16_t baseAddress);
 
-extern void PMM_disableSvmL(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables the low-side SVM circuitry
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_enableSvmL(uint16_t baseAddress);
 
-extern void PMM_enableSvsH(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables the low-side SVM circuitry
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_disableSvmL(uint16_t baseAddress);
 
-extern void PMM_disableSvsH(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables the high-side SVS circuitry
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_enableSvsH(uint16_t baseAddress);
 
-extern void PMM_enableSvmH(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables the high-side SVS circuitry
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_disableSvsH(uint16_t baseAddress);
 
-extern void PMM_disableSvmH(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables the high-side SVM circuitry
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_enableSvmH(uint16_t baseAddress);
 
-extern void PMM_enableSvsLSvmL(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables the high-side SVM circuitry
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_disableSvmH(uint16_t baseAddress);
 
-extern void PMM_disableSvsLSvmL(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables the low-side SVS and SVM circuitry
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_enableSvsLSvmL(uint16_t baseAddress);
 
-extern void PMM_enableSvsHSvmH(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables the low-side SVS and SVM circuitry
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_disableSvsLSvmL(uint16_t baseAddress);
 
-extern void PMM_disableSvsHSvmH(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables the high-side SVS and SVM circuitry
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_enableSvsHSvmH(uint16_t baseAddress);
 
-extern void PMM_enableSvsLReset(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables the high-side SVS and SVM circuitry
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_disableSvsHSvmH(uint16_t baseAddress);
 
-extern void PMM_disableSvsLReset(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables the POR signal generation when a low-voltage event is
+//! registered by the low-side SVS
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_enableSvsLReset(uint16_t baseAddress);
 
-extern void PMM_enableSvmLInterrupt(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables the POR signal generation when a low-voltage event is
+//! registered by the low-side SVS
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_disableSvsLReset(uint16_t baseAddress);
 
-extern void PMM_disableSvmLInterrupt(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables the interrupt generation when a low-voltage event is
+//! registered by the low-side SVM
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_enableSvmLInterrupt(uint16_t baseAddress);
 
-extern void PMM_enableSvsHReset(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables the interrupt generation when a low-voltage event is
+//! registered by the low-side SVM
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_disableSvmLInterrupt(uint16_t baseAddress);
 
-extern void PMM_disableSvsHReset(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables the POR signal generation when a low-voltage event is
+//! registered by the high-side SVS
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_enableSvsHReset(uint16_t baseAddress);
 
-extern void PMM_enableSvmHInterrupt(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables the POR signal generation when a low-voltage event is
+//! registered by the high-side SVS
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_disableSvsHReset(uint16_t baseAddress);
 
-extern void PMM_disableSvmHInterrupt(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables the interrupt generation when a low-voltage event is
+//! registered by the high-side SVM
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_enableSvmHInterrupt(uint16_t baseAddress);
 
-extern void PMM_clearPMMIFGS(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables the interrupt generation when a low-voltage event is
+//! registered by the high-side SVM
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIE register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_disableSvmHInterrupt(uint16_t baseAddress);
 
-extern void PMM_SvsLEnabledInLPMFastWake(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Clear all interrupt flags for the PMM
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b PMMIFG register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_clearPMMIFGS(uint16_t baseAddress);
 
-extern void PMM_SvsLEnabledInLPMSlowWake(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables supervisor low side in LPM with twake-up-fast from LPM2,
+//! LPM3, and LPM4
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_SvsLEnabledInLPMFastWake(uint16_t baseAddress);
 
-extern void PMM_SvsLDisabledInLPMFastWake(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables supervisor low side in LPM with twake-up-slow from LPM2,
+//! LPM3, and LPM4
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_SvsLEnabledInLPMSlowWake(uint16_t baseAddress);
 
-extern void PMM_SvsLDisabledInLPMSlowWake(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables supervisor low side in LPM with twake-up-fast from LPM2,
+//! LPM3, and LPM4
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_SvsLDisabledInLPMFastWake(uint16_t baseAddress);
 
-extern void PMM_SvsHEnabledInLPMNormPerf(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables supervisor low side in LPM with twake-up-slow from LPM2,
+//! LPM3, and LPM4
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_SvsLDisabledInLPMSlowWake(uint16_t baseAddress);
 
-extern void PMM_SvsHEnabledInLPMFullPerf(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables supervisor high side in LPM with tpd = 20 ?s(1)
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_SvsHEnabledInLPMNormPerf(uint16_t baseAddress);
 
-extern void PMM_SvsHDisabledInLPMNormPerf(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Enables supervisor high side in LPM with tpd = 2.5 ?s(1)
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_SvsHEnabledInLPMFullPerf(uint16_t baseAddress);
 
-extern void PMM_SvsHDisabledInLPMFullPerf(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables supervisor high side in LPM with tpd = 20 ?s(1)
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_SvsHDisabledInLPMNormPerf(uint16_t baseAddress);
 
-extern void PMM_SvsLOptimizedInLPMFastWake(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Disables supervisor high side in LPM with tpd = 2.5 ?s(1)
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMHCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_SvsHDisabledInLPMFullPerf(uint16_t baseAddress);
 
-extern void PMM_SvsHOptimizedInLPMFullPerf(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Optimized to provide twake-up-fast from LPM2, LPM3, and LPM4 with
+//! least power
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_SvsLOptimizedInLPMFastWake(uint16_t baseAddress);
 
-extern uint16_t PMM_setVCoreUp(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Optimized to provide tpd = 2.5 ?s(1) in LPM with least power
+//!
+//! \param baseAddress is the base address of the PMM module.
+//!
+//! Modified bits of \b PMMCTL0 register and bits of \b SVSMLCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void PMM_SvsHOptimizedInLPMFullPerf(uint16_t baseAddress);
+
+//*****************************************************************************
+//
+//! \brief Increase Vcore by one level
+//!
+//! \param baseAddress is the base address of the PMM module.
+//! \param level level to which Vcore needs to be increased
+//!        Valid values are:
+//!        - \b PMM_CORE_LEVEL_0 [Default]
+//!        - \b PMM_CORE_LEVEL_1
+//!        - \b PMM_CORE_LEVEL_2
+//!        - \b PMM_CORE_LEVEL_3
+//!
+//! Modified bits of \b PMMCTL0 register, bits of \b PMMIFG register, bits of
+//! \b PMMRIE register, bits of \b SVSMHCTL register and bits of \b SVSMLCTL
+//! register.
+//!
+//! \return STATUS_SUCCESS or STATUS_FAIL
+//
+//*****************************************************************************
+extern uint16_t PMM_setVCoreUp(uint16_t baseAddress,
                                uint8_t level);
 
-extern uint16_t PMM_setVCoreDown(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Decrease Vcore by one level
+//!
+//! \param baseAddress is the base address of the PMM module.
+//! \param level level to which Vcore needs to be decreased
+//!        Valid values are:
+//!        - \b PMM_CORE_LEVEL_0 [Default]
+//!        - \b PMM_CORE_LEVEL_1
+//!        - \b PMM_CORE_LEVEL_2
+//!        - \b PMM_CORE_LEVEL_3
+//!
+//! Modified bits of \b PMMCTL0 register, bits of \b PMMIFG register, bits of
+//! \b PMMRIE register, bits of \b SVSMHCTL register and bits of \b SVSMLCTL
+//! register.
+//!
+//! \return STATUS_SUCCESS
+//
+//*****************************************************************************
+extern uint16_t PMM_setVCoreDown(uint16_t baseAddress,
                                  uint8_t level);
 
-extern bool PMM_setVCore(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Set Vcore to expected level
+//!
+//! \param baseAddress is the base address of the PMM module.
+//! \param level level to which Vcore needs to be decreased/increased
+//!        Valid values are:
+//!        - \b PMM_CORE_LEVEL_0 [Default]
+//!        - \b PMM_CORE_LEVEL_1
+//!        - \b PMM_CORE_LEVEL_2
+//!        - \b PMM_CORE_LEVEL_3
+//!
+//! Modified bits of \b PMMCTL0 register, bits of \b PMMIFG register, bits of
+//! \b PMMRIE register, bits of \b SVSMHCTL register and bits of \b SVSMLCTL
+//! register.
+//!
+//! \return STATUS_SUCCESS or STATUS_FAIL
+//
+//*****************************************************************************
+extern bool PMM_setVCore(uint16_t baseAddress,
                          uint8_t level);
 
-extern uint16_t PMM_getInterruptStatus(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Returns interrupt status
+//!
+//! \param baseAddress is the base address of the PMM module.
+//! \param mask is the mask for specifying the required flag
+//!        Mask value is the logical OR of any of the following:
+//!        - \b PMM_SVSMLDLYIFG
+//!        - \b PMM_SVMLIFG
+//!        - \b PMM_SVMLVLRIFG
+//!        - \b PMM_SVSMHDLYIFG
+//!        - \b PMM_SVMHIFG
+//!        - \b PMM_SVMHVLRIFG
+//!        - \b PMM_PMMBORIFG
+//!        - \b PMM_PMMRSTIFG
+//!        - \b PMM_PMMPORIFG
+//!        - \b PMM_SVSHIFG
+//!        - \b PMM_SVSLIFG
+//!        - \b PMM_PMMLPM5IFG
+//!
+//! \return Logical OR of any of the following:
+//!         - \b PMM_SVSMLDLYIFG
+//!         - \b PMM_SVMLIFG
+//!         - \b PMM_SVMLVLRIFG
+//!         - \b PMM_SVSMHDLYIFG
+//!         - \b PMM_SVMHIFG
+//!         - \b PMM_SVMHVLRIFG
+//!         - \b PMM_PMMBORIFG
+//!         - \b PMM_PMMRSTIFG
+//!         - \b PMM_PMMPORIFG
+//!         - \b PMM_SVSHIFG
+//!         - \b PMM_SVSLIFG
+//!         - \b PMM_PMMLPM5IFG
+//!         \n indicating the status of the masked interrupts
+//
+//*****************************************************************************
+extern uint16_t PMM_getInterruptStatus(uint16_t baseAddress,
                                        uint16_t mask);
 
 //*****************************************************************************
@@ -174,4 +622,4 @@ extern uint16_t PMM_getInterruptStatus(uint32_t baseAddress,
 
 #endif
 #endif // __MSP430WARE_PMM_H__
-//Released_Version_4_10_02
+//Released_Version_4_20_00

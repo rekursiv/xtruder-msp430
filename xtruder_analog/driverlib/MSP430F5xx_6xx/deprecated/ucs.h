@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -177,85 +177,610 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern void UCS_setExternalClockSource(uint32_t baseAddress,
+
+//*****************************************************************************
+//
+//! \brief Sets the external clock source
+//!
+//! This function sets the external clock sources XT1 and XT2 crystal
+//! oscillator frequency values. This function must be called if an external
+//! crystal XT1 or XT2 is used and the user intends to call UCS_getMCLK,
+//! UCS_getSMCLK or UCS_getACLK APIs. If not, it is not necessary to invoke
+//! this API.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param XT1CLK_frequency is the XT1 crystal frequencies in Hz
+//! \param XT2CLK_frequency is the XT2 crystal frequencies in Hz
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_setExternalClockSource(uint16_t baseAddress,
                                        uint32_t XT1CLK_frequency,
                                        uint32_t XT2CLK_frequency);
 
-extern void UCS_clockSignalInit(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Initializes a clock signal
+//!
+//! This function initializes each of the clock signals. The user must ensure
+//! that this function is called for each clock signal. If not, the default
+//! state is assumed for the particular clock signal. Refer MSP430Ware
+//! documentation for UCS module or Device Family User's Guide for details of
+//! default clock signal states.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param selectedClockSignal selected clock signal
+//!        Valid values are:
+//!        - \b UCS_ACLK
+//!        - \b UCS_MCLK
+//!        - \b UCS_SMCLK
+//!        - \b UCS_FLLREF
+//! \param clockSource is clock source for the selectedClockSignal
+//!        Valid values are:
+//!        - \b UCS_XT1CLK_SELECT
+//!        - \b UCS_VLOCLK_SELECT
+//!        - \b UCS_REFOCLK_SELECT
+//!        - \b UCS_DCOCLK_SELECT
+//!        - \b UCS_DCOCLKDIV_SELECT
+//!        - \b UCS_XT2CLK_SELECT
+//! \param clockSourceDivider selected the clock divider to calculate
+//!        clocksignal from clock source.
+//!        Valid values are:
+//!        - \b UCS_CLOCK_DIVIDER_1 [Default]
+//!        - \b UCS_CLOCK_DIVIDER_2
+//!        - \b UCS_CLOCK_DIVIDER_4
+//!        - \b UCS_CLOCK_DIVIDER_8
+//!        - \b UCS_CLOCK_DIVIDER_12 - [Valid only for UCS_FLLREF]
+//!        - \b UCS_CLOCK_DIVIDER_16
+//!        - \b UCS_CLOCK_DIVIDER_32 - [Not valid for UCS_FLLREF]
+//!
+//! Modified bits of \b UCSCTL5 register, bits of \b UCSCTL4 register and bits
+//! of \b UCSCTL3 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_clockSignalInit(uint16_t baseAddress,
                                 uint8_t selectedClockSignal,
                                 uint16_t clockSource,
                                 uint16_t clockSourceDivider);
 
-extern void UCS_LFXT1Start(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Initializes the XT1 crystal oscillator in low frequency mode
+//!
+//! Initializes the XT1 crystal oscillator in low frequency mode. Loops until
+//! all oscillator fault flags are cleared, with no timeout. See the device-
+//! specific data sheet for appropriate drive settings.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param xt1drive is the target drive strength for the XT1 crystal
+//!        oscillator.
+//!        Valid values are:
+//!        - \b UCS_XT1_DRIVE0
+//!        - \b UCS_XT1_DRIVE1
+//!        - \b UCS_XT1_DRIVE2
+//!        - \b UCS_XT1_DRIVE3 [Default]
+//!        \n Modified bits are \b XT1DRIVE of \b UCSCTL6 register.
+//! \param xcap is the selected capacitor value. This parameter selects the
+//!        capacitors applied to the LF crystal (XT1) or resonator in the LF
+//!        mode. The effective capacitance (seen by the crystal) is Ceff. (CXIN
+//!        + 2 pF)/2. It is assumed that CXIN = CXOUT and that a parasitic
+//!        capacitance of 2 pF is added by the package and the printed circuit
+//!        board. For details about the typical internal and the effective
+//!        capacitors, refer to the device-specific data sheet.
+//!        Valid values are:
+//!        - \b UCS_XCAP_0
+//!        - \b UCS_XCAP_1
+//!        - \b UCS_XCAP_2
+//!        - \b UCS_XCAP_3 [Default]
+//!
+//! Modified bits are \b XCAP of \b UCSCTL6 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_LFXT1Start(uint16_t baseAddress,
                            uint16_t xt1drive,
                            uint8_t xcap);
 
-extern void UCS_HFXT1Start(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Initializes the XT1 crystal oscillator in low frequency mode
+//!
+//! Initializes the XT1 crystal oscillator in high frequency mode. Loops until
+//! all oscillator fault flags are cleared, with no timeout. See the device-
+//! specific data sheet for appropriate drive settings.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param xt1drive is the target drive strength for the XT1 crystal
+//!        oscillator.
+//!        Valid values are:
+//!        - \b UCS_XT1_DRIVE0
+//!        - \b UCS_XT1_DRIVE1
+//!        - \b UCS_XT1_DRIVE2
+//!        - \b UCS_XT1_DRIVE3 [Default]
+//!
+//! Modified bits of \b UCSCTL7 register, bits of \b UCSCTL6 register and bits
+//! of \b SFRIFG register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_HFXT1Start(uint16_t baseAddress,
                            uint16_t xt1drive);
 
-extern void UCS_bypassXT1(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Bypass the XT1 crystal oscillator
+//!
+//! Bypasses the XT1 crystal oscillator. Loops until all oscillator fault flags
+//! are cleared, with no timeout.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param highOrLowFrequency selects high frequency or low frequency mode for
+//!        XT1.
+//!        Valid values are:
+//!        - \b UCS_XT1_HIGH_FREQUENCY
+//!        - \b UCS_XT1_LOW_FREQUENCY [Default]
+//!
+//! Modified bits of \b UCSCTL7 register, bits of \b UCSCTL6 register and bits
+//! of \b SFRIFG register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_bypassXT1(uint16_t baseAddress,
                           uint8_t highOrLowFrequency);
 
-extern bool UCS_LFXT1StartWithTimeout(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Initializes the XT1 crystal oscillator in low frequency mode with
+//! timeout
+//!
+//! Initializes the XT1 crystal oscillator in low frequency mode with timeout.
+//! Loops until all oscillator fault flags are cleared or until a timeout
+//! counter is decremented and equals to zero. See the device-specific
+//! datasheet for appropriate drive settings.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param xt1drive is the target drive strength for the XT1 crystal
+//!        oscillator.
+//!        Valid values are:
+//!        - \b UCS_XT1_DRIVE0
+//!        - \b UCS_XT1_DRIVE1
+//!        - \b UCS_XT1_DRIVE2
+//!        - \b UCS_XT1_DRIVE3 [Default]
+//! \param xcap is the selected capacitor value. This parameter selects the
+//!        capacitors applied to the LF crystal (XT1) or resonator in the LF
+//!        mode. The effective capacitance (seen by the crystal) is Ceff. (CXIN
+//!        + 2 pF)/2. It is assumed that CXIN = CXOUT and that a parasitic
+//!        capacitance of 2 pF is added by the package and the printed circuit
+//!        board. For details about the typical internal and the effective
+//!        capacitors, refer to the device-specific data sheet.
+//!        Valid values are:
+//!        - \b UCS_XCAP_0
+//!        - \b UCS_XCAP_1
+//!        - \b UCS_XCAP_2
+//!        - \b UCS_XCAP_3 [Default]
+//! \param timeout is the count value that gets decremented every time the loop
+//!        that clears oscillator fault flags gets executed.
+//!
+//! Modified bits of \b UCSCTL7 register, bits of \b UCSCTL6 register and bits
+//! of \b SFRIFG register.
+//!
+//! \return STATUS_SUCCESS or STATUS_FAIL
+//
+//*****************************************************************************
+extern bool UCS_LFXT1StartWithTimeout(uint16_t baseAddress,
                                       uint16_t xt1drive,
                                       uint8_t xcap,
                                       uint16_t timeout);
 
-extern bool UCS_HFXT1StartWithTimeout(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Initializes the XT1 crystal oscillator in high frequency mode with
+//! timeout
+//!
+//! Initializes the XT1 crystal oscillator in high frequency mode with timeout.
+//! Loops until all oscillator fault flags are cleared or until a timeout
+//! counter is decremented and equals to zero. See the device-specific data
+//! sheet for appropriate drive settings.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param xt1drive is the target drive strength for the XT1 crystal
+//!        oscillator.
+//!        Valid values are:
+//!        - \b UCS_XT1_DRIVE0
+//!        - \b UCS_XT1_DRIVE1
+//!        - \b UCS_XT1_DRIVE2
+//!        - \b UCS_XT1_DRIVE3 [Default]
+//! \param timeout is the count value that gets decremented every time the loop
+//!        that clears oscillator fault flags gets executed.
+//!
+//! Modified bits of \b UCSCTL7 register, bits of \b UCSCTL6 register and bits
+//! of \b SFRIFG register.
+//!
+//! \return STATUS_SUCCESS or STATUS_FAIL
+//
+//*****************************************************************************
+extern bool UCS_HFXT1StartWithTimeout(uint16_t baseAddress,
                                       uint16_t xt1drive,
                                       uint16_t timeout);
 
-extern bool UCS_bypassXT1WithTimeout(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Bypasses the XT1 crystal oscillator with time out
+//!
+//! Bypasses the XT1 crystal oscillator with time out. Loops until all
+//! oscillator fault flags are cleared or until a timeout counter is
+//! decremented and equals to zero.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param highOrLowFrequency selects high frequency or low frequency mode for
+//!        XT1.
+//!        Valid values are:
+//!        - \b UCS_XT1_HIGH_FREQUENCY
+//!        - \b UCS_XT1_LOW_FREQUENCY [Default]
+//! \param timeout is the count value that gets decremented every time the loop
+//!        that clears oscillator fault flags gets executed.
+//!
+//! Modified bits of \b UCSCTL7 register, bits of \b UCSCTL6 register and bits
+//! of \b SFRIFG register.
+//!
+//! \return STATUS_SUCCESS or STATUS_FAIL
+//
+//*****************************************************************************
+extern bool UCS_bypassXT1WithTimeout(uint16_t baseAddress,
                                      uint8_t highOrLowFrequency,
                                      uint16_t timeout);
 
-extern void UCS_XT1Off(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Stops the XT1 oscillator using the XT1OFF bit.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_XT1Off(uint16_t baseAddress);
 
-extern void UCS_XT2Start(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Initializes the XT2 crystal oscillator
+//!
+//! Initializes the XT2 crystal oscillator, which supports crystal frequencies
+//! between 4 MHz and 32 MHz, depending on the selected drive strength. Loops
+//! until all oscillator fault flags are cleared, with no timeout. See the
+//! device-specific data sheet for appropriate drive settings.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param xt2drive is the target drive strength for the XT2 crystal
+//!        oscillator.
+//!        Valid values are:
+//!        - \b UCS_XT2DRIVE_4MHZ_8MHZ
+//!        - \b UCS_XT2DRIVE_8MHZ_16MHZ
+//!        - \b UCS_XT2DRIVE_16MHZ_24MHZ
+//!        - \b UCS_XT2DRIVE_24MHZ_32MHZ [Default]
+//!
+//! Modified bits of \b UCSCTL7 register, bits of \b UCSCTL6 register and bits
+//! of \b SFRIFG register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_XT2Start(uint16_t baseAddress,
                          uint16_t xt2drive);
 
-extern void UCS_bypassXT2(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Bypasses the XT2 crystal oscillator
+//!
+//! Bypasses the XT2 crystal oscillator, which supports crystal frequencies
+//! between 4 MHz and 32 MHz. Loops until all oscillator fault flags are
+//! cleared, with no timeout.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//!
+//! Modified bits of \b UCSCTL7 register, bits of \b UCSCTL6 register and bits
+//! of \b SFRIFG register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_bypassXT2(uint16_t baseAddress);
 
-extern bool UCS_XT2StartWithTimeout(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Initializes the XT2 crystal oscillator with timeout
+//!
+//! Initializes the XT2 crystal oscillator, which supports crystal frequencies
+//! between 4 MHz and 32 MHz, depending on the selected drive strength. Loops
+//! until all oscillator fault flags are cleared or until a timeout counter is
+//! decremented and equals to zero. See the device-specific data sheet for
+//! appropriate drive settings.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param xt2drive is the target drive strength for the XT2 crystal
+//!        oscillator.
+//!        Valid values are:
+//!        - \b UCS_XT2DRIVE_4MHZ_8MHZ
+//!        - \b UCS_XT2DRIVE_8MHZ_16MHZ
+//!        - \b UCS_XT2DRIVE_16MHZ_24MHZ
+//!        - \b UCS_XT2DRIVE_24MHZ_32MHZ [Default]
+//! \param timeout is the count value that gets decremented every time the loop
+//!        that clears oscillator fault flags gets executed.
+//!
+//! Modified bits of \b UCSCTL7 register, bits of \b UCSCTL6 register and bits
+//! of \b SFRIFG register.
+//!
+//! \return STATUS_SUCCESS or STATUS_FAIL
+//
+//*****************************************************************************
+extern bool UCS_XT2StartWithTimeout(uint16_t baseAddress,
                                     uint16_t xt2drive,
                                     uint16_t timeout);
 
-extern bool UCS_bypassXT2WithTimeout(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Bypasses the XT2 crystal oscillator with timeout
+//!
+//! Bypasses the XT2 crystal oscillator, which supports crystal frequencies
+//! between 4 MHz and 32 MHz. Loops until all oscillator fault flags are
+//! cleared or until a timeout counter is decremented and equals to zero.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param timeout is the count value that gets decremented every time the loop
+//!        that clears oscillator fault flags gets executed.
+//!
+//! Modified bits of \b UCSCTL7 register, bits of \b UCSCTL6 register and bits
+//! of \b SFRIFG register.
+//!
+//! \return STATUS_SUCCESS or STATUS_FAIL
+//
+//*****************************************************************************
+extern bool UCS_bypassXT2WithTimeout(uint16_t baseAddress,
                                      uint16_t timeout);
 
-extern void UCS_XT2Off(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Stops the XT2 oscillator using the XT2OFF bit.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//!
+//! Modified bits of \b UCSCTL6 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_XT2Off(uint16_t baseAddress);
 
-extern void UCS_initFLLSettle(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Initializes the DCO to operate a frequency that is a multiple of the
+//! reference frequency into the FLL
+//!
+//! Initializes the DCO to operate a frequency that is a multiple of the
+//! reference frequency into the FLL. Loops until all oscillator fault flags
+//! are cleared, with a timeout. If the frequency is greater than 16 MHz, the
+//! function sets the MCLK and SMCLK source to the undivided DCO frequency.
+//! Otherwise, the function sets the MCLK and SMCLK source to the DCOCLKDIV
+//! frequency. This function executes a software delay that is proportional in
+//! length to the ratio of the target FLL frequency and the FLL reference.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param fsystem is the target frequency for MCLK in kHz
+//! \param ratio is the ratio x/y, where x = fsystem and y = FLL reference
+//!        frequency.
+//!
+//! Modified bits of \b UCSCTL0 register, bits of \b UCSCTL4 register, bits of
+//! \b UCSCTL7 register, bits of \b UCSCTL1 register, bits of \b SFRIFG1
+//! register and bits of \b UCSCTL2 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_initFLLSettle(uint16_t baseAddress,
                               uint16_t fsystem,
                               uint16_t ratio);
 
-extern void UCS_initFLL(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Initializes the DCO to operate a frequency that is a multiple of the
+//! reference frequency into the FLL
+//!
+//! Initializes the DCO to operate a frequency that is a multiple of the
+//! reference frequency into the FLL. Loops until all oscillator fault flags
+//! are cleared, with no timeout. If the frequency is greater than 16 MHz, the
+//! function sets the MCLK and SMCLK source to the undivided DCO frequency.
+//! Otherwise, the function sets the MCLK and SMCLK source to the DCOCLKDIV
+//! frequency.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param fsystem is the target frequency for MCLK in kHz
+//! \param ratio is the ratio x/y, where x = fsystem and y = FLL reference
+//!        frequency.
+//!
+//! Modified bits of \b UCSCTL0 register, bits of \b UCSCTL4 register, bits of
+//! \b UCSCTL7 register, bits of \b UCSCTL1 register, bits of \b SFRIFG1
+//! register and bits of \b UCSCTL2 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_initFLL(uint16_t baseAddress,
                         uint16_t fsystem,
                         uint16_t ratio);
 
-extern void UCS_enableClockRequest(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Enables conditional module requests
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param selectClock selects specific request enables
+//!        Valid values are:
+//!        - \b UCS_ACLK
+//!        - \b UCS_SMCLK
+//!        - \b UCS_MCLK
+//!        - \b UCS_MODOSC
+//!
+//! Modified bits of \b UCSCTL8 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_enableClockRequest(uint16_t baseAddress,
                                    uint8_t selectClock);
 
-extern void UCS_disableClockRequest(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Disables conditional module requests
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param selectClock selects specific request disable
+//!        Valid values are:
+//!        - \b UCS_ACLK
+//!        - \b UCS_SMCLK
+//!        - \b UCS_MCLK
+//!        - \b UCS_MODOSC
+//!
+//! Modified bits of \b UCSCTL8 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_disableClockRequest(uint16_t baseAddress,
                                     uint8_t selectClock);
 
-extern uint8_t UCS_faultFlagStatus(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Gets the current UCS fault flag status.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param mask is the masked interrupt flag status to be returned. Mask
+//!        parameter can be either any of the following selection.
+//!        Valid values are:
+//!        - \b UCS_XT2OFFG - XT2 oscillator fault flag
+//!        - \b UCS_XT1HFOFFG - XT1 oscillator fault flag (HF mode)
+//!        - \b UCS_XT1LFOFFG - XT1 oscillator fault flag (LF mode)
+//!        - \b UCS_DCOFFG - DCO fault flag
+//!
+//
+//*****************************************************************************
+extern uint8_t UCS_faultFlagStatus(uint16_t baseAddress,
                                    uint8_t mask);
 
-extern void UCS_clearFaultFlag(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Clears the current UCS fault flag status for the masked bit.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param mask is the masked interrupt flag status to be returned. mask
+//!        parameter can be any one of the following
+//!        Valid values are:
+//!        - \b UCS_XT2OFFG - XT2 oscillator fault flag
+//!        - \b UCS_XT1HFOFFG - XT1 oscillator fault flag (HF mode)
+//!        - \b UCS_XT1LFOFFG - XT1 oscillator fault flag (LF mode)
+//!        - \b UCS_DCOFFG - DCO fault flag
+//!
+//! Modified bits of \b UCSCTL7 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_clearFaultFlag(uint16_t baseAddress,
                                uint8_t mask);
 
-extern void UCS_SMCLKOff(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Turns off SMCLK using the SMCLKOFF bit
+//!
+//! \param baseAddress is the base address of the UCS module.
+//!
+//! Modified bits of \b UCSCTL6 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_SMCLKOff(uint16_t baseAddress);
 
-extern void UCS_SMCLKOn(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Turns ON SMCLK using the SMCLKOFF bit
+//!
+//! \param baseAddress is the base address of the UCS module.
+//!
+//! Modified bits of \b UCSCTL6 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void UCS_SMCLKOn(uint16_t baseAddress);
 
-extern uint32_t UCS_getACLK(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Get the current ACLK frequency
+//!
+//! Get the current ACLK frequency. The user of this API must ensure that
+//! UCS_setExternalClockSource API was invoked before in case XT1 or XT2 is
+//! being used.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//!
+//! \return Current ACLK frequency in Hz
+//
+//*****************************************************************************
+extern uint32_t UCS_getACLK(uint16_t baseAddress);
 
-extern uint32_t UCS_getSMCLK(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Get the current SMCLK frequency
+//!
+//! Get the current SMCLK frequency. The user of this API must ensure that
+//! UCS_setExternalClockSource API was invoked before in case XT1 or XT2 is
+//! being used.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//!
+//! \return Current SMCLK frequency in Hz
+//
+//*****************************************************************************
+extern uint32_t UCS_getSMCLK(uint16_t baseAddress);
 
-extern uint32_t UCS_getMCLK(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Get the current MCLK frequency
+//!
+//! Get the current MCLK frequency. The user of this API must ensure that
+//! UCS_setExternalClockSource API was invoked before in case XT1 or XT2 is
+//! being used.
+//!
+//! \param baseAddress is the base address of the UCS module.
+//!
+//! \return Current MCLK frequency in Hz
+//
+//*****************************************************************************
+extern uint32_t UCS_getMCLK(uint16_t baseAddress);
 
-extern uint16_t UCS_clearAllOscFlagsWithTimeout(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Clears all the Oscillator Flags
+//!
+//! \param baseAddress is the base address of the UCS module.
+//! \param timeout is the count value that gets decremented every time the loop
+//!        that clears oscillator fault flags gets executed.
+//!
+//! \return Logical OR of any of the following:
+//!         - \b UCS_XT2OFFG XT2 oscillator fault flag
+//!         - \b UCS_XT1HFOFFG XT1 oscillator fault flag (HF mode)
+//!         - \b UCS_XT1LFOFFG XT1 oscillator fault flag (LF mode)
+//!         - \b UCS_DCOFFG DCO fault flag
+//!         \n indicating the status of the oscillator fault flags
+//
+//*****************************************************************************
+extern uint16_t UCS_clearAllOscFlagsWithTimeout(uint16_t baseAddress,
                                                 uint16_t timeout);
 
 //*****************************************************************************
@@ -269,4 +794,4 @@ extern uint16_t UCS_clearAllOscFlagsWithTimeout(uint32_t baseAddress,
 
 #endif
 #endif // __MSP430WARE_UCS_H__
-//Released_Version_4_10_02
+//Released_Version_4_20_00

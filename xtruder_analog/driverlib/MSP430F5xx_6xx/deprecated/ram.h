@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -74,10 +74,62 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern void RAM_setSectorOff(uint32_t baseAddress,
+
+//*****************************************************************************
+//
+//! \brief Set specified RAM sector off
+//!
+//! \param baseAddress is the base address of the RAM module.
+//! \param sector is specified sector to be set off.
+//!        Mask value is the logical OR of any of the following:
+//!        - \b RAM_SECTOR0
+//!        - \b RAM_SECTOR1
+//!        - \b RAM_SECTOR2
+//!        - \b RAM_SECTOR3
+//!        - \b RAM_SECTOR4
+//!        - \b RAM_SECTOR5
+//!        - \b RAM_SECTOR6
+//!        - \b RAM_SECTOR7
+//!
+//! Modified bits of \b RCCTL0 register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void RAM_setSectorOff(uint16_t baseAddress,
                              uint8_t sector);
 
-extern uint8_t RAM_getSectorState(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Get RAM sector ON/OFF status
+//!
+//! \param baseAddress is the base address of the RAM module.
+//! \param sector is specified sector
+//!        Mask value is the logical OR of any of the following:
+//!        - \b RAM_SECTOR0
+//!        - \b RAM_SECTOR1
+//!        - \b RAM_SECTOR2
+//!        - \b RAM_SECTOR3
+//!        - \b RAM_SECTOR4
+//!        - \b RAM_SECTOR5
+//!        - \b RAM_SECTOR6
+//!        - \b RAM_SECTOR7
+//!
+//! Modified bits of \b RCCTL0 register.
+//!
+//! \return Logical OR of any of the following:
+//!         - \b RAM_SECTOR0
+//!         - \b RAM_SECTOR1
+//!         - \b RAM_SECTOR2
+//!         - \b RAM_SECTOR3
+//!         - \b RAM_SECTOR4
+//!         - \b RAM_SECTOR5
+//!         - \b RAM_SECTOR6
+//!         - \b RAM_SECTOR7
+//!         \n indicating the status of the masked sectors
+//
+//*****************************************************************************
+extern uint8_t RAM_getSectorState(uint16_t baseAddress,
                                   uint8_t sector);
 
 //*****************************************************************************
@@ -91,4 +143,4 @@ extern uint8_t RAM_getSectorState(uint32_t baseAddress,
 
 #endif
 #endif // __MSP430WARE_RAM_H__
-//Released_Version_4_10_02
+//Released_Version_4_20_00

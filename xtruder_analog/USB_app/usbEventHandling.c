@@ -58,7 +58,8 @@
 #endif
 
 //These variables are only example, they are not needed for stack
-extern volatile uint8_t bHIDDataReceived_event;    //data received event
+extern volatile uint8_t bHIDDataReceived_event;        //data received event
+//extern volatile uint8_t bDataReceiveCompleted_event;   //data receive completed event
 
 /*
  * If this function gets executed, it's a sign that the output of the USB PLL has failed.
@@ -68,7 +69,7 @@ uint8_t USB_handleClockEvent ()
 {
     //TO DO: You can place your code here
 
-    return (TRUE);                              //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
+    return (TRUE);                                  //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
 }
 
 /*
@@ -82,9 +83,10 @@ uint8_t USB_handleVbusOnEvent ()
     //We switch on USB and connect to the BUS
     if (USB_enable() == kUSB_succeed){
         USB_reset();
-        USB_connect();                          //generate rising edge on DP -> the host enumerates our device as full speed device
+        USB_connect();                              //generate rising edge on DP -> the host enumerates our device as full speed
+                                                    //device
     }
-    return (TRUE);                              //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
+    return (TRUE);                                  //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
 }
 
 /*
@@ -100,7 +102,9 @@ uint8_t USB_handleVbusOffEvent ()
 #else
     UCS_XT2Off(__MSP430_BASEADDRESS_UCS__);
 #endif
-    return (TRUE);                              //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
+
+
+    return (TRUE);                                  //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
 }
 
 /*
@@ -111,7 +115,7 @@ uint8_t USB_handleResetEvent ()
 {
     //TO DO: You can place your code here
 
-    return (TRUE);                              //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
+    return (TRUE);                                  //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
 }
 
 /*
@@ -123,7 +127,7 @@ uint8_t USB_handleSuspendEvent ()
 {
     //TO DO: You can place your code here
 
-    return (TRUE);                              //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
+    return (TRUE);                                  //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
 }
 
 /*
@@ -135,7 +139,7 @@ uint8_t USB_handleResumeEvent ()
 {
     //TO DO: You can place your code here
 
-    return (TRUE);                              //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
+    return (TRUE);                                  //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
 }
 
 /*
@@ -147,7 +151,7 @@ uint8_t USB_handleEnumCompleteEvent ()
 {
     //TO DO: You can place your code here
 
-    return (TRUE);                              //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
+    return (TRUE);                                  //return TRUE to wake the main loop (in the case the CPU slept before interrupt)
 }
 
 
@@ -181,7 +185,6 @@ void USB_handlePLLStartedEvent(void)
 
 
 
-
 #ifdef _CDC_
 
 /*
@@ -192,8 +195,8 @@ uint8_t USBCDC_handleDataReceived (uint8_t intfNum)
 {
     //TO DO: You can place your code here
 
-    return (FALSE);                             //return FALSE to go asleep after interrupt (in the case the CPU slept before
-                                                //interrupt)
+    return (FALSE);                                 //return FALSE to go asleep after interrupt (in the case the CPU slept before
+                                                    //interrupt)
 }
 
 /*
@@ -204,8 +207,8 @@ uint8_t USBCDC_handleSendCompleted (uint8_t intfNum)
 {
     //TO DO: You can place your code here
 
-    return (FALSE);                             //return FALSE to go asleep after interrupt (in the case the CPU slept before
-                                                //interrupt)
+    return (FALSE);                                 //return FALSE to go asleep after interrupt (in the case the CPU slept before
+                                                    //interrupt)
 }
 
 /*
@@ -215,8 +218,8 @@ uint8_t USBCDC_handleReceiveCompleted (uint8_t intfNum)
 {
     //TO DO: You can place your code here
 
-    return (FALSE);                             //return FALSE to go asleep after interrupt (in the case the CPU slept before
-                                                //interrupt)
+    return (FALSE);                                 //return FALSE to go asleep after interrupt (in the case the CPU slept before
+                                                    //interrupt)
 }
 
 /*
@@ -226,8 +229,8 @@ uint8_t USBCDC_handleSetLineCoding (uint8_t intfNum, uint32_t lBaudrate)
 {
     //TO DO: You can place your code here
 
-    return (FALSE);                             //return FALSE to go asleep after interrupt (in the case the CPU slept before
-                                                //interrupt)
+    return (FALSE);                                 //return FALSE to go asleep after interrupt (in the case the CPU slept before
+                                                    //interrupt)
 }
 
 /*
@@ -249,10 +252,10 @@ uint8_t USBHID_handleDataReceived (uint8_t intfNum)
 {
     //TO DO: You can place your code here
 
-    bHIDDataReceived_event = TRUE;              //data received event
+    bHIDDataReceived_event = TRUE;                  //data received event
 
-    return (TRUE);                              //return FALSE to go asleep after interrupt (in the case the CPU slept before
-                                                //interrupt)
+    return (TRUE);                                  //return FALSE to go asleep after interrupt (in the case the CPU slept before
+                                                    //interrupt)
 }
 
 /*
@@ -263,8 +266,8 @@ uint8_t USBHID_handleSendCompleted (uint8_t intfNum)
 {
     //TO DO: You can place your code here
 
-    return (FALSE);                             //return FALSE to go asleep after interrupt (in the case the CPU slept before
-                                                //interrupt)
+    return (FALSE);                                 //return FALSE to go asleep after interrupt (in the case the CPU slept before
+                                                    //interrupt)
 }
 
 /*
@@ -274,8 +277,9 @@ uint8_t USBHID_handleReceiveCompleted (uint8_t intfNum)
 {
     //TO DO: You can place your code here
 
-    return (FALSE);                             //return FALSE to go asleep after interrupt (in the case the CPU slept before
-                                                //interrupt)
+//    bDataReceiveCompleted_event = TRUE;             //data received event
+    return (TRUE);                                  //return FALSE to go asleep after interrupt (in the case the CPU slept before
+                                                    //interrupt)
 }
 
 /*
@@ -356,8 +360,8 @@ uint8_t *USBHID_handleEP0GetReport (uint8_t reportType, uint8_t reportId,
 #ifdef _MSC_
 uint8_t USBMSC_handleBufferEvent (void)
 {
-    return (FALSE);                             //return FALSE to go asleep after interrupt (in the case the CPU slept before
-                                                //interrupt)
+    return (FALSE);                                 //return FALSE to go asleep after interrupt (in the case the CPU slept before
+                                                    //interrupt)
 }
 
 #endif //_MSC_
@@ -406,4 +410,4 @@ uint8_t USBPHDC_handleReceiveCompleted (uint8_t intfNum)
  | End of source file                                                          |
  +----------------------------------------------------------------------------*/
 /*------------------------ Nothing Below This Line --------------------------*/
-//Released_Version_4_10_02
+//Released_Version_4_20_00

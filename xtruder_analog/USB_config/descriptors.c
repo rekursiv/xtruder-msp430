@@ -37,6 +37,7 @@
 #include <USB_API/USB_Common/defMSP430USB.h>
 #include <USB_API/USB_Common/usb.h>              // USB-specific Data Structures
 #include "descriptors.h"
+
 #include <USB_API/USB_HID_API/UsbHidReq.h>
 
 uint16_t const report_desc_size[HID_NUM_INTERFACES] =
@@ -219,148 +220,188 @@ const struct tUsbHandle stUsbHandle[]=
 const tDEVICE_REQUEST_COMPARE tUsbRequestList[] = 
 {
 
-    //---- HID 0 Class Requests -----//
-    USB_REQ_TYPE_INPUT | USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
+    {
+        //---- HID 0 Class Requests -----//
+            USB_REQ_TYPE_INPUT | USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
 
-    USB_REQ_GET_REPORT,
-    0xff,0xff,
-    HID0_REPORT_INTERFACE,0x00,
-    0xff,0xff,
-    0xcc,&usbGetReport,
-// SET REPORT
-    USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
-    USB_REQ_SET_REPORT,
-    0xff,0xFF,                          // bValueL is index and bValueH is type
-    HID0_REPORT_INTERFACE,0x00,
-    0xff,0xff,
-    0xcc,&usbSetReport,
-    // GET REPORT DESCRIPTOR
-    USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
-    USB_REQ_GET_DESCRIPTOR,
-    0xff,DESC_TYPE_REPORT,              // bValueL is index and bValueH is type
-    HID0_REPORT_INTERFACE,0x00,
-    0xff,0xff,
-    0xdc,&usbGetReportDescriptor,
-// GET HID DESCRIPTOR
-    USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
-    USB_REQ_GET_DESCRIPTOR,
-    0xff,DESC_TYPE_HID,                 // bValueL is index and bValueH is type
-    HID0_REPORT_INTERFACE,0x00,
-    0xff,0xff,
+            USB_REQ_GET_REPORT,
+            0xff,0xff,
+            HID0_REPORT_INTERFACE,0x00,
+            0xff,0xff,
+            0xcc,&usbGetReport,
+    },
+    {
+            // SET REPORT
+            USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
+            USB_REQ_SET_REPORT,
+            0xff,0xFF,                          // bValueL is index and bValueH is type
+            HID0_REPORT_INTERFACE,0x00,
+            0xff,0xff,
+            0xcc,&usbSetReport,
+    },
+    {
+            // GET REPORT DESCRIPTOR
+            USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
+            USB_REQ_GET_DESCRIPTOR,
+            0xff,DESC_TYPE_REPORT,              // bValueL is index and bValueH is type
+            HID0_REPORT_INTERFACE,0x00,
+            0xff,0xff,
+            0xdc,&usbGetReportDescriptor,
+    },
+    {
+            // GET HID DESCRIPTOR
+            USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
+            USB_REQ_GET_DESCRIPTOR,
+            0xff,DESC_TYPE_HID,                 // bValueL is index and bValueH is type
+            HID0_REPORT_INTERFACE,0x00,
+            0xff,0xff,
 
-    0xdc,&usbGetHidDescriptor,
+            0xdc,&usbGetHidDescriptor,
+    },
+    {
+        //---- USB Standard Requests -----//
+            // clear device feature
+            USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
+            USB_REQ_CLEAR_FEATURE,
+            FEATURE_REMOTE_WAKEUP,0x00,         // feature selector
+            0x00,0x00,
+            0x00,0x00,
+            0xff,&usbClearDeviceFeature,
+    },
+    {
 
-//---- USB Standard Requests -----//
-    // clear device feature
-    USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
-    USB_REQ_CLEAR_FEATURE,
-    FEATURE_REMOTE_WAKEUP,0x00,         // feature selector
-    0x00,0x00,
-    0x00,0x00,
-    0xff,&usbClearDeviceFeature,
+            // clear endpoint feature
+            USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_ENDPOINT,
+            USB_REQ_CLEAR_FEATURE,
+            FEATURE_ENDPOINT_STALL,0x00,
+            0xff,0x00,
+            0x00,0x00,
+            0xf7,&usbClearEndpointFeature,
+    },
+    {
+            // get configuration
+            USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
+            USB_REQ_GET_CONFIGURATION,
+            0x00,0x00, 
+            0x00,0x00, 
+            0x01,0x00,
+            0xff,&usbGetConfiguration,
+    },
+    {
+            // get device descriptor
+            USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
+            USB_REQ_GET_DESCRIPTOR,
+            0xff,DESC_TYPE_DEVICE,              // bValueL is index and bValueH is type
+            0xff,0xff,
+            0xff,0xff,
+            0xd0,&usbGetDeviceDescriptor,
+    },
+    {
+            // get configuration descriptor
+            USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
+            USB_REQ_GET_DESCRIPTOR,
+            0xff,DESC_TYPE_CONFIG,              // bValueL is index and bValueH is type
+            0xff,0xff,
+            0xff,0xff,
+            0xd0,&usbGetConfigurationDescriptor,
+    },
+    {
+            // get string descriptor
+            USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
+            USB_REQ_GET_DESCRIPTOR,
+            0xff,DESC_TYPE_STRING,              // bValueL is index and bValueH is type
+            0xff,0xff,
+            0xff,0xff,
+            0xd0,&usbGetStringDescriptor,
+    },
+    {
+           // get interface
+            USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
+            USB_REQ_GET_INTERFACE,
+            0x00,0x00,
+            0xff,0xff,
+            0x01,0x00,
+            0xf3,&usbGetInterface,
+    },
+    {
+            // get device status
+            USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
+            USB_REQ_GET_STATUS,
+            0x00,0x00,
+            0x00,0x00,
+            0x02,0x00,
+            0xff,&usbGetDeviceStatus, 
+    },
+    {
+            // get interface status
+            USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
+            USB_REQ_GET_STATUS,
+            0x00,0x00,
+            0xff,0x00,
+            0x02,0x00,
+            0xf7,&usbGetInterfaceStatus,
+    },
+    {
+            // get endpoint status
+            USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_ENDPOINT,
+            USB_REQ_GET_STATUS,
+            0x00,0x00,
+            0xff,0x00,
+            0x02,0x00,
+            0xf7,&usbGetEndpointStatus,
+    },
+    {
+            // set address
+            USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
+            USB_REQ_SET_ADDRESS,
+            0xff,0x00,
+            0x00,0x00,
+            0x00,0x00,
+            0xdf,&usbSetAddress,
+    },
+    {
+            // set configuration
+            USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
+            USB_REQ_SET_CONFIGURATION,
+            0xff,0x00,
+            0x00,0x00,
+            0x00,0x00,
+            0xdf,&usbSetConfiguration,
+    },
+    {
+           // set device feature
+            USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
+            USB_REQ_SET_FEATURE,
+            0xff,0x00,                      // feature selector
+            0x00,0x00,
+            0x00,0x00,
+            0xdf,&usbSetDeviceFeature,
+    },
+    {
+            // set endpoint feature
+            USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_ENDPOINT,
+            USB_REQ_SET_FEATURE,
+            0xff,0x00,                      // feature selector
+            0xff,0x00,                      // endpoint number <= 127
+            0x00,0x00,
+            0xd7,&usbSetEndpointFeature,
+    },
+    {
+            // set interface
+            USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
+            USB_REQ_SET_INTERFACE,
+            0xff,0x00,                      // feature selector
+            0xff,0x00,                      // interface number
+            0x00,0x00,
+            0xd7,&usbSetInterface,
+    },
+    {
 
-// clear endpoint feature
-    USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_ENDPOINT,
-    USB_REQ_CLEAR_FEATURE,
-FEATURE_ENDPOINT_STALL,0x00,
-    0xff,0x00,
-    0x00,0x00,
-    0xf7,&usbClearEndpointFeature,
-// get configuration
-    USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
-    USB_REQ_GET_CONFIGURATION,
-    0x00,0x00, 
-    0x00,0x00, 
-    0x01,0x00,
-    0xff,&usbGetConfiguration,
-// get device descriptor
-    USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
-    USB_REQ_GET_DESCRIPTOR,
-    0xff,DESC_TYPE_DEVICE,              // bValueL is index and bValueH is type
-    0xff,0xff,
-    0xff,0xff,
-    0xd0,&usbGetDeviceDescriptor,
-// get configuration descriptor
-    USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
-    USB_REQ_GET_DESCRIPTOR,
-    0xff,DESC_TYPE_CONFIG,              // bValueL is index and bValueH is type
-    0xff,0xff,
-    0xff,0xff,
-    0xd0,&usbGetConfigurationDescriptor,
-// get string descriptor
-    USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
-    USB_REQ_GET_DESCRIPTOR,
-    0xff,DESC_TYPE_STRING,              // bValueL is index and bValueH is type
-    0xff,0xff,
-    0xff,0xff,
-    0xd0,&usbGetStringDescriptor,
-// get interface
-    USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
-    USB_REQ_GET_INTERFACE,
-    0x00,0x00,
-    0xff,0xff,
-    0x01,0x00,
-    0xf3,&usbGetInterface,
-    // get device status
-    USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
-    USB_REQ_GET_STATUS,
-    0x00,0x00,
-    0x00,0x00,
-    0x02,0x00,
-    0xff,&usbGetDeviceStatus,     // get interface status
-    USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
-    USB_REQ_GET_STATUS,
-    0x00,0x00,
-    0xff,0x00,
-    0x02,0x00,
-    0xf7,&usbGetInterfaceStatus,
-    //     get endpoint status
-    USB_REQ_TYPE_INPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_ENDPOINT,
-    USB_REQ_GET_STATUS,
-    0x00,0x00,
-    0xff,0x00,
-    0x02,0x00,
-    0xf7,&usbGetEndpointStatus,
-    // set address
-    USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
-    USB_REQ_SET_ADDRESS,
-    0xff,0x00,
-    0x00,0x00,
-    0x00,0x00,
-    0xdf,&usbSetAddress,
-    // set configuration
-    USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
-    USB_REQ_SET_CONFIGURATION,
-    0xff,0x00,
-    0x00,0x00,
-    0x00,0x00,
-    0xdf,&usbSetConfiguration,
-    // set device feature
-    USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_DEVICE,
-    USB_REQ_SET_FEATURE,
-    0xff,0x00,                      // feature selector
-    0x00,0x00,
-    0x00,0x00,
-    0xdf,&usbSetDeviceFeature,
-    // set endpoint feature
-    USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_ENDPOINT,
-    USB_REQ_SET_FEATURE,
-    0xff,0x00,                      // feature selector
-    0xff,0x00,                      // endpoint number <= 127
-    0x00,0x00,
-    0xd7,&usbSetEndpointFeature,
-    // set interface
-    USB_REQ_TYPE_OUTPUT | USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
-    USB_REQ_SET_INTERFACE,
-    0xff,0x00,                      // feature selector
-    0xff,0x00,                      // interface number
-    0x00,0x00,
-    0xd7,&usbSetInterface,
-
-    // end of usb descriptor -- this one will be matched to any USB request
-    // since bCompareMask is 0x00.
-    0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff, 
-    0x00,&usbInvalidRequest     // end of list
+            // end of usb descriptor -- this one will be matched to any USB request
+            // since bCompareMask is 0x00.
+            0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff, 
+            0x00,&usbInvalidRequest     // end of list
+    }
 };
 
 /*-----------------------------------------------------------------------------+

@@ -1,5 +1,5 @@
 /* --COPYRIGHT--,BSD
- * Copyright (c) 2013, Texas Instruments Incorporated
+ * Copyright (c) 2014, Texas Instruments Incorporated
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -84,17 +84,116 @@ extern "C"
 // Prototypes for the APIs.
 //
 //*****************************************************************************
-extern void WDT_A_hold(uint32_t baseAddress);
 
-extern void WDT_A_start(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Holds the Watchdog Timer.
+//!
+//! This function stops the watchdog timer from running, that way no interrupt
+//! or PUC is asserted.
+//!
+//! \param baseAddress is the base address of the WDT_A module.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void WDT_A_hold(uint16_t baseAddress);
 
-extern void WDT_A_resetTimer(uint32_t baseAddress);
+//*****************************************************************************
+//
+//! \brief Starts the Watchdog Timer.
+//!
+//! This function starts the watchdog timer functionality to start counting
+//! again.
+//!
+//! \param baseAddress is the base address of the WDT_A module.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void WDT_A_start(uint16_t baseAddress);
 
-extern void WDT_A_watchdogTimerInit(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Resets the timer counter of the Watchdog Timer.
+//!
+//! This function resets the watchdog timer to 0x0000h.
+//!
+//! \param baseAddress is the base address of the WDT_A module.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void WDT_A_resetTimer(uint16_t baseAddress);
+
+//*****************************************************************************
+//
+//! \brief Sets the clock source for the Watchdog Timer in watchdog mode.
+//!
+//! This function sets the watchdog timer in watchdog mode, which will cause a
+//! PUC when the timer overflows. When in the mode, a PUC can be avoided with a
+//! call to WDT_A_resetTimer() before the timer runs out.
+//!
+//! \param baseAddress is the base address of the WDT_A module.
+//! \param clockSelect is the clock source that the watchdog timer will use.
+//!        Valid values are:
+//!        - \b WDT_A_CLOCKSOURCE_SMCLK [Default]
+//!        - \b WDT_A_CLOCKSOURCE_ACLK
+//!        - \b WDT_A_CLOCKSOURCE_VLOCLK
+//!        - \b WDT_A_CLOCKSOURCE_XCLK
+//!        \n Modified bits are \b WDTSSEL of \b WDTCTL register.
+//! \param clockDivider is the divider of the clock source, in turn setting the
+//!        watchdog timer interval.
+//!        Valid values are:
+//!        - \b WDT_A_CLOCKDIVIDER_2G
+//!        - \b WDT_A_CLOCKDIVIDER_128M
+//!        - \b WDT_A_CLOCKDIVIDER_8192K
+//!        - \b WDT_A_CLOCKDIVIDER_512K
+//!        - \b WDT_A_CLOCKDIVIDER_32K [Default]
+//!        - \b WDT_A_CLOCKDIVIDER_8192
+//!        - \b WDT_A_CLOCKDIVIDER_512
+//!        - \b WDT_A_CLOCKDIVIDER_64
+//!        \n Modified bits are \b WDTIS and \b WDTHOLD of \b WDTCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void WDT_A_watchdogTimerInit(uint16_t baseAddress,
                                     uint8_t clockSelect,
                                     uint8_t clockDivider);
 
-extern void WDT_A_intervalTimerInit(uint32_t baseAddress,
+//*****************************************************************************
+//
+//! \brief Sets the clock source for the Watchdog Timer in timer interval mode.
+//!
+//! This function sets the watchdog timer as timer interval mode, which will
+//! assert an interrupt without causing a PUC.
+//!
+//! \param baseAddress is the base address of the WDT_A module.
+//! \param clockSelect is the clock source that the watchdog timer will use.
+//!        Valid values are:
+//!        - \b WDT_A_CLOCKSOURCE_SMCLK [Default]
+//!        - \b WDT_A_CLOCKSOURCE_ACLK
+//!        - \b WDT_A_CLOCKSOURCE_VLOCLK
+//!        - \b WDT_A_CLOCKSOURCE_XCLK
+//!        \n Modified bits are \b WDTSSEL of \b WDTCTL register.
+//! \param clockDivider is the divider of the clock source, in turn setting the
+//!        watchdog timer interval.
+//!        Valid values are:
+//!        - \b WDT_A_CLOCKDIVIDER_2G
+//!        - \b WDT_A_CLOCKDIVIDER_128M
+//!        - \b WDT_A_CLOCKDIVIDER_8192K
+//!        - \b WDT_A_CLOCKDIVIDER_512K
+//!        - \b WDT_A_CLOCKDIVIDER_32K [Default]
+//!        - \b WDT_A_CLOCKDIVIDER_8192
+//!        - \b WDT_A_CLOCKDIVIDER_512
+//!        - \b WDT_A_CLOCKDIVIDER_64
+//!        \n Modified bits are \b WDTIS and \b WDTHOLD of \b WDTCTL register.
+//!
+//! \return None
+//
+//*****************************************************************************
+extern void WDT_A_intervalTimerInit(uint16_t baseAddress,
                                     uint8_t clockSelect,
                                     uint8_t clockDivider);
 
@@ -109,4 +208,4 @@ extern void WDT_A_intervalTimerInit(uint32_t baseAddress,
 
 #endif
 #endif // __MSP430WARE_WDT_A_H__
-//Released_Version_4_10_02
+//Released_Version_4_20_00
