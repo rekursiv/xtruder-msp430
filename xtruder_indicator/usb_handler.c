@@ -15,7 +15,8 @@
 #define OUT_PKT_TYPE_INFO 0
 
 #define BUFFER_SIZE 64
-uint8_t dataBuffer[BUFFER_SIZE];
+uint8_t dataBufferIn[BUFFER_SIZE];
+uint8_t dataBufferOut[BUFFER_SIZE];
 
 // Global flags set by events
 volatile uint8_t bHIDDataReceived_event = FALSE;  // Flag set by event handler to indicate data has been received into USB buffer
@@ -31,23 +32,39 @@ inline void initUsb() {
 
 
 
-inline void readData() {
-	uint8_t msgLen=0;
-	while (USBHID_bytesInUSBBuffer(HID0_INTFNUM)) {
-		msgLen = hidReceiveDataInBuffer((uint8_t*)dataBuffer, BUFFER_SIZE, HID0_INTFNUM);
-		if (msgLen>0) {
-			if (dataBuffer[0]==1) {  // zero
-				_disable_interrupts();
-				stepCount=0;
-				stepCountMin=0;
-				stepCountMax=0;
-				_enable_interrupts();
+inline int readData() {
+
+	uint8_t bytesRcvd = USBHID_bytesInUSBBuffer(HID0_INTFNUM);
+	if (bytesRcvd>BUFFER_SIZE) {
+		USBHID_rejectData(HID0_INTFNUM);
+	} else if (bytesRcvd>0) {
+		if (USBHID_receiveData(dataBufferIn, bytesRcvd, HID0_INTFNUM) == kUSBHID_busNotAvailable) {
+			uint16_t rcvLen;
+			USBHID_abortReceive(&rcvLen, HID0_INTFNUM);
+			bytesRcvd = (uint8_t)rcvLen;
+		} else {
+			if (bytesRcvd==3) {
+				if (dataBufferIn[0]==1) {  // zero
+					_disable_interrupts();
+					stepCount=0;
+					stepCountMin=0;
+					stepCountMax=0;
+					_enable_interrupts();
+				}
 			}
 		}
 	}
+	return bytesRcvd;
 }
 
-inline void writeData() {
+
+inline int writeData() {
+
+	// check for error or send in progress
+	// only continue if USBHID_intfStatus() returns 0 (all clear)
+    uint16_t bytesSent, bytesReceived;
+	if (USBHID_intfStatus(HID0_INTFNUM, &bytesSent, &bytesReceived)!=0) return bytesSent;
+
 	// atomic data copy
 	stepCountCopy=stepCount;
 	stepCountMinCopy=stepCountMin;
@@ -59,18 +76,23 @@ inline void writeData() {
 
 	// setup packet
 	uint8_t msgLen=7;
-	dataBuffer[0] = OUT_PKT_TYPE_INFO;
+	dataBufferOut[0] = OUT_PKT_TYPE_INFO;
 
 	// copy data
-	dataBuffer[1] = (stepCountCopy >> 8) & 0xFF;
-	dataBuffer[2] = stepCountCopy & 0xFF;
-	dataBuffer[3] = (stepCountMinCopy >> 8) & 0xFF;
-	dataBuffer[4] = stepCountMinCopy & 0xFF;
-	dataBuffer[5] = (stepCountMaxCopy >> 8) & 0xFF;
-	dataBuffer[6] = stepCountMaxCopy & 0xFF;
+	dataBufferOut[1] = (stepCountCopy >> 8) & 0xFF;
+	dataBufferOut[2] = stepCountCopy & 0xFF;
+	dataBufferOut[3] = (stepCountMinCopy >> 8) & 0xFF;
+	dataBufferOut[4] = stepCountMinCopy & 0xFF;
+	dataBufferOut[5] = (stepCountMaxCopy >> 8) & 0xFF;
+	dataBufferOut[6] = stepCountMaxCopy & 0xFF;
 
 	// send
-	hidSendDataInBackground((uint8_t*)dataBuffer, msgLen, HID0_INTFNUM, 0);
+	if (USBHID_sendData((uint8_t*)dataBufferOut, msgLen, HID0_INTFNUM)!=kUSBHID_sendStarted) {
+		USBHID_abortSend(&bytesSent, HID0_INTFNUM);
+	}
+
+	return bytesSent;
+
 }
 
 

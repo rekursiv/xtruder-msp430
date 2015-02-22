@@ -27,7 +27,7 @@ inline void initUsb() {
 }
 
 
-inline int readData() {    //////  TEST
+inline int readData() {
 
 	uint8_t bytesRcvd = USBHID_bytesInUSBBuffer(HID0_INTFNUM);
 	if (bytesRcvd>BUFFER_SIZE) {
