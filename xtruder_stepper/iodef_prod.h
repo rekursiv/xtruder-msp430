@@ -8,3 +8,7 @@
 #define DIR_PIN BIT1
 #define DIR_PORT P4OUT
 
+// homing switch
+#define HOME_PIN BIT0
+#define HOME_REG P6IN
+#define HOME_PORT GPIO_PORT_P6

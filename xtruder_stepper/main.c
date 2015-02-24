@@ -5,8 +5,8 @@
 
 #include "usb_handler.h"
 
-#include "iodef_test.h"  //   TEST
-//#include "iodef_prod.h"
+//#include "iodef_test.h"  //   TEST
+#include "iodef_prod.h"
 
 #define SPICLK 1000000
 
@@ -25,6 +25,10 @@ volatile uint8_t torqueDiv = 255;
 volatile uint8_t accelDiv = 1;
 volatile uint8_t accelStep = 8;
 
+volatile uint16_t loPos = 200;
+volatile uint16_t hiPos = 1000;
+volatile uint16_t posCountDiv = 0;   // set to "0" to disable "flip flop mode"
+
 ////////////  USB DATA  /////////
 
 volatile uint8_t mcStatus=0;
@@ -33,7 +37,18 @@ volatile uint8_t curTorque=0;
 volatile uint8_t curCmd = 0;
 volatile int16_t curMotorSpeed = 0;
 
+volatile uint16_t curPosCount = 0;
+
+/////////////  FLIP FLOP
+
+volatile uint16_t curStepCount = 0;
+volatile uint8_t homingState = 2;  //   0=lo,  1=hi,  2=switch
+
 ///////////////////////////////////////////////////
+
+
+
+
 
 
 inline uint16_t calcPeriod() {
@@ -157,6 +172,8 @@ inline void setupPorts() {
 
 	initPorts();           // Config GPIOS for low-power (output low)
 
+	GPIO_setAsInputPinWithPullUpresistor(HOME_PORT, HOME_PIN);   // homing switch
+
 	GPIO_setAsOutputPin(GPIO_PORT_P4, GPIO_PIN2);   // STEP
 
 	GPIO_setAsInputPin(GPIO_PORT_P2, GPIO_PIN0);  // STALL
@@ -210,21 +227,48 @@ void main(void)	{													//////////////////                 ======== main =
 
 		if (timerWakeUp) {
 
+			// process homing and position
+			if (homingState==2) {
+				if ((HOME_REG&HOME_PIN)==0&&abs(targetMotorSpeed)>15) {
+					homingState=1;
+					curStepCount=0;
+					curPosCount=0;
+					targetMotorSpeed=-targetMotorSpeed;
+				}
+			} else {
+
+				// calc positioning
+				if (curStepCount>posCountDiv) {
+					curStepCount=0;
+					if (targetMotorSpeed>0) ++curPosCount;
+					else if (targetMotorSpeed<0&&curPosCount>0) --curPosCount;
+				}
+
+				// reverse motor at endpoints
+				if (homingState==1&&curPosCount>hiPos) {
+					homingState=0;
+					targetMotorSpeed=-targetMotorSpeed;
+				} else if (homingState==0&&curPosCount<loPos) {
+					homingState=1;
+					targetMotorSpeed=-targetMotorSpeed;
+				}
+			}
+
 			// process acceleration
-			int32_t delta = (int32_t)targetMotorSpeed-(int32_t)curMotorSpeed;
-			int32_t step = 0;
-			if (delta>0) {
-				if (delta<accelStep) step=delta;
-				else step=accelStep;
+			int32_t deltaToDestSpeed = (int32_t)targetMotorSpeed-(int32_t)curMotorSpeed;
+			int32_t deltaSpeedAdjust = 0;
+			if (deltaToDestSpeed>0) {
+				if (deltaToDestSpeed<accelStep) deltaSpeedAdjust=deltaToDestSpeed;
+				else deltaSpeedAdjust=accelStep;
 			}
-			else if (delta<0) {
-				if (delta>-step) step=delta;
-				else step=-accelStep;
+			else if (deltaToDestSpeed<0) {
+				if (deltaToDestSpeed>-deltaSpeedAdjust) deltaSpeedAdjust=deltaToDestSpeed;
+				else deltaSpeedAdjust=-accelStep;
 			}
-			if (step!=0) {
+			if (deltaSpeedAdjust!=0) {
 
 				// set motor speed
-				curMotorSpeed+=step;
+				curMotorSpeed+=deltaSpeedAdjust;
 				TB0CCR0=calcPeriod();
 
 				// set direction pin
@@ -250,11 +294,21 @@ void main(void)	{													//////////////////                 ======== main =
 		if (handleUsb()) {
 			if (curCmd==1) {
 				TA0CCR0 = accelDiv;
-			} else if (curCmd==3) {
-				targetMotorSpeed = 0;
-				curMotorSpeed = 0;
+			} else if (curCmd==3) {  //  RESET
+				targetMotorSpeed=0;
+				curMotorSpeed=0;
+				curTorque = holdingTorque;
+///
+				if (posCountDiv!=0) {
+					curStepCount=0;
+					curPosCount=0;
+					homingState=2;
+				}
+///
 				sendSpiData(0b01110000, 0b00000000);  // clear STATUS
 				//            daaaxxxx    ssvppcct
+
+				sendCtrl();
 			}
 			sendSpiData(0b11110000, 0b00000000);  //  read SATAUS
 			curCmd = 0;
@@ -277,13 +331,13 @@ __interrupt void TIMER0_A0_ISR (void)
 #pragma vector=TIMER0_B0_VECTOR
 __interrupt void TIMER0_B0_ISR (void)
 {
-
 	if (abs(curMotorSpeed)>15) {
 		STEP_PORT |= STEP_PIN;			// STEP high
 		__delay_cycles(48);  	// stay high for ~2uS
 		STEP_PORT &= ~STEP_PIN;			// STEP low
-	}
 
+		++curStepCount;
+	}
 }
 
 

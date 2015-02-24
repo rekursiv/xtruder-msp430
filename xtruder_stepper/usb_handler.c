@@ -18,6 +18,9 @@
 uint8_t dataBufferIn[BUFFER_SIZE];
 uint8_t dataBufferOut[BUFFER_SIZE];
 
+volatile int16_t posCountCopy;
+volatile int16_t targetMotorSpeedIn;
+
 // Global flags set by events
 volatile uint8_t bHIDDataReceived_event = FALSE;  // Flag set by event handler to indicate data has been received into USB buffer
 
@@ -39,7 +42,7 @@ inline int readData() {
 			bytesRcvd = (uint8_t)rcvLen;
 		} else {
 			curCmd=dataBufferIn[0];
-			if (curCmd==1&&bytesRcvd==9) {
+			if (curCmd==1&&bytesRcvd==15) {
 				stepMode=dataBufferIn[1];
 				isGain=dataBufferIn[2];
 				holdingTorque=dataBufferIn[3];
@@ -48,9 +51,24 @@ inline int readData() {
 				torqueDiv=dataBufferIn[6];
 				accelDiv=dataBufferIn[7];
 				accelStep=dataBufferIn[8];
+				loPos=(dataBufferIn[9]<<8)|dataBufferIn[10];
+				hiPos=(dataBufferIn[11]<<8)|dataBufferIn[12];
+				posCountDiv=(dataBufferIn[13]<<8)|dataBufferIn[14];
 			} else if (curCmd==2&&bytesRcvd==3) {
-				P4OUT ^= BIT7;  ///  TEST
-				targetMotorSpeed=(dataBufferIn[1]<<8)|dataBufferIn[2];
+				targetMotorSpeedIn=(dataBufferIn[1]<<8)|dataBufferIn[2];
+
+				if (posCountDiv!=0) {  // maintain the current direction in case of "flip flop mode"   TODO: fix this ugly hack
+					if (targetMotorSpeed>0) targetMotorSpeed=abs(targetMotorSpeedIn);
+					else if (targetMotorSpeed<0) targetMotorSpeed=-abs(targetMotorSpeedIn);
+					else {
+						curStepCount=0;
+						curPosCount=0;
+						homingState=2;
+						targetMotorSpeed=targetMotorSpeedIn;
+					}
+				} else {
+					targetMotorSpeed=targetMotorSpeedIn;
+				}
 			}
 		}
 	}
@@ -65,13 +83,18 @@ inline int writeData() {
     uint16_t bytesSent, bytesReceived;
 	if (USBHID_intfStatus(HID0_INTFNUM, &bytesSent, &bytesReceived)!=0) return bytesSent;
 
+	// atomic data copy
+	posCountCopy = curPosCount;
+
 	// setup packet
-	uint8_t msgLen=5;
+	uint8_t msgLen=7;
 	dataBufferOut[0] = OUT_PKT_TYPE_INFO;
 	dataBufferOut[1] = (curMotorSpeed >> 8) & 0xFF;
 	dataBufferOut[2] = curMotorSpeed & 0xFF;
 	dataBufferOut[3] = curTorque;
 	dataBufferOut[4] = mcStatus;
+	dataBufferOut[5] = (posCountCopy >> 8) & 0xFF;
+	dataBufferOut[6] = posCountCopy & 0xFF;
 
 	// send
 	if (USBHID_sendData((uint8_t*)dataBufferOut, msgLen, HID0_INTFNUM)!=kUSBHID_sendStarted) {
