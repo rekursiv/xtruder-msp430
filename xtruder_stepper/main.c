@@ -5,8 +5,8 @@
 
 #include "usb_handler.h"
 
-//#include "iodef_test.h"  //   TEST
-#include "iodef_prod.h"
+#include "iodef_test.h"  //   TEST
+//#include "iodef_prod.h"
 
 #define SPICLK 1000000
 
@@ -228,7 +228,13 @@ void main(void)	{													//////////////////                 ======== main =
 		if (timerWakeUp) {
 
 			// process homing and position
-			if (homingState==2) {
+			if (posCountDiv==0) {
+				if ((HOME_REG&HOME_PIN)==0) {				// "spool reset" hack
+					if (curPosCount==0) curPosCount=2;
+				} else {
+					if (curPosCount!=0) curPosCount=0;
+				}
+			} else if (homingState==2) {
 				if ((HOME_REG&HOME_PIN)==0&&abs(targetMotorSpeed)>15) {
 					homingState=1;
 					curStepCount=0;

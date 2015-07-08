@@ -85,6 +85,7 @@ inline int writeData() {
 
 	// atomic data copy
 	posCountCopy = curPosCount;
+	if (posCountDiv==0 && curPosCount==2) curPosCount=1;   ///////    "spool reset" hack
 
 	// setup packet
 	uint8_t msgLen=7;

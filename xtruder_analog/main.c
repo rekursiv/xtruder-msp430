@@ -9,6 +9,8 @@
 volatile int16_t adcValue[4];
 
 
+// input voltage range on ADC is 0 - 2.5v
+
 inline void initAdc() {
 
     //Configure internal reference
@@ -39,6 +41,7 @@ inline void initAdc() {
     ADC12_A_setupSamplingTimer(ADC12_A_BASE, ADC12_A_CYCLEHOLD_256_CYCLES, ADC12_A_CYCLEHOLD_4_CYCLES, ADC12_A_MULTIPLESAMPLESENABLE);
 
     //Configure Memory Buffers
+    //   ADC12_A_VREFPOS_INT = 2.5v reference
     ADC12_A_memoryConfigure(ADC12_A_BASE, ADC12_A_MEMORY_0, ADC12_A_INPUT_A0, ADC12_A_VREFPOS_INT, ADC12_A_VREFNEG_AVSS, ADC12_A_NOTENDOFSEQUENCE);
     ADC12_A_memoryConfigure(ADC12_A_BASE, ADC12_A_MEMORY_1, ADC12_A_INPUT_A1, ADC12_A_VREFPOS_INT, ADC12_A_VREFNEG_AVSS, ADC12_A_NOTENDOFSEQUENCE);
     ADC12_A_memoryConfigure(ADC12_A_BASE, ADC12_A_MEMORY_2, ADC12_A_INPUT_A2, ADC12_A_VREFPOS_INT, ADC12_A_VREFNEG_AVSS, ADC12_A_NOTENDOFSEQUENCE);
